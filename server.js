@@ -2,11 +2,18 @@ const port = 3000;
 const express = require('express');
 const cors = require('cors');
 const app = express();
+require('dotenv').config();
 
 const { generateSVGPaths, wrapInSVG } = require('./service/svgService');
 
 app.use(cors());
 app.use(express.json());
+
+//db 연동
+const sequelize = require('./database/mysql/mysqlConfig.js');
+const connectMongoDB = require('./database/mongodb/mongdbConfig.js');
+connectMongoDB();
+
 
 app.get('/', (req, res) => {
   res.send('서버가 잘 실행되고 있어!');
@@ -46,5 +53,5 @@ app.get('/svg', (req, res) => {
 });
 
 app.listen(port, '0.0.0.0', () => {
-  console.log(`서버가 http://localhost:${port} 에서 실행 중`);
+  console.log(`Server running at http://localhost:${port}`);
 });
