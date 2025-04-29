@@ -5,7 +5,7 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const process = require('process');
 const basename = path.basename(__filename);
-const sequelize = require(__dirname + '/../config/mysqlConfig');
+const sequelize = require(__dirname + '/../mysqlConfig');
 const db = {};
 
 //디렉토리 내부에 모든 스키마 파일들을 db에 로드. 
