@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) =>{
-    const User = sequelize.define('User', {
+    const Users = sequelize.define('Users', {
             id:{
                 type:DataTypes.INTEGER,
                 primaryKey: true,
@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) =>{
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            regist_type: {
+            license_type: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
@@ -32,5 +32,15 @@ module.exports = (sequelize, DataTypes) =>{
             timestamps: false
         }
     );
-    return User;
+    Users.associate = (db) => {
+        Users.hasMany(db.Children, {
+            foreignKey:'userid',
+            sourceKey: 'id',
+        });
+        Users.hasMany(db.Tests, {
+            foreignKey:'userid',
+            sourceKey:'id',
+        });
+    }
+    return Users;
 }
