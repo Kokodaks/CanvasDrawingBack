@@ -2,7 +2,7 @@ const port = 3000;
 const express = require('express');
 const cors = require('cors');
 const app = express();
-require('dotenv').config();
+const dotenv = require('dotenv');
 
 const { generateSVGPaths, wrapInSVG } = require('./service/svgService');
 
@@ -10,6 +10,16 @@ app.use(cors());
 app.use(express.json());
 
 //db 연동
+
+const env = process.env.NODE_ENV === 'production' ? '.env.prod' : '.env.dev';
+dotenv.config({path: env});
+console.log(`✅ Loaded environment from ${env}`);
+console.log(process.env.MYSQL_USER);
+console.log(process.env.MYSQL_DATABASE);
+console.log(process.env.MYSQL_PASSWORD);
+
+
+
 const sequelize = require('./database/mysql/mysqlConfig.js');
 const connectMongoDB = require('./database/mongodb/mongdbConfig.js');
 connectMongoDB();

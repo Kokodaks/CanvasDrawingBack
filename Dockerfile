@@ -6,6 +6,8 @@ WORKDIR /app
 # 2. 의존성 설치
 COPY package*.json ./
 RUN npm install
+RUN apt update && apt install -y default-mysql-client
+
 
 # 3. 코드 복사
 COPY . .
