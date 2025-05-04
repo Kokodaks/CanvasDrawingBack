@@ -32,10 +32,15 @@ app.post('/upload', (req, res) => {
 
 //타임랩스용 원본 JSON 데이터
 app.get('/json', (req, res) => {
-  if (!strokeData) {
-    return res.status(404).json({ error: 'No stroke data' });
+  try{
+    if (!strokeData) {
+      console.log("stroke 정보 없음");
+      return res.status(404).json({ error: 'No stroke data' });
+    }
+    return res.json(strokeData);
+  }catch(e){
+    return res.status(500).json({error : e});
   }
-  res.json(strokeData);
 });
 
 //정적 그림 svg 데이터
