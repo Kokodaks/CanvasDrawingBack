@@ -52,6 +52,9 @@ app.get('/svg', (req, res) => {
     res.send(svg);
 });
 
+app.use('/video', require('./routes/videoRoutes.js'));
+
+
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${port}`);
 });

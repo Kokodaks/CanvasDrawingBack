@@ -1,3 +1,4 @@
+const mysqlDB = require('./database/mysql/models');
 // const mysqlDB = require('./database/mysql/models');
 const connectMongoDB = require('./database/mongodb/mongdbConfig.js');
 const syncMongoDB = require('./database/mongodb/models/index.js');
@@ -6,6 +7,10 @@ const syncMongoDB = require('./database/mongodb/models/index.js');
 // (async () => {
 //     await mysqlDB.sequelize.sync({force: true});
 // })();
+
+(async () => {
+    await mysqlDB.sequelize.sync({force: true});
+})();
 
 const mongoDB = async() => {
     await connectMongoDB();
