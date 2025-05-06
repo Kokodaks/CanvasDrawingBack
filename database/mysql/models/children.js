@@ -9,15 +9,22 @@ module.exports = (sequelize, DataTypes) =>{
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            regist_no:{
-                type: DataTypes.INTEGER,
+            gender:{
+                type : DataTypes.ENUM('female', 'male', '여자', '남자'),
                 allowNull: false,
-                unique: true,
             },
             ssn:{
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 unique: true,
+            },
+            address:{
+                type: DataTypes.STRIMG,
+                allowNull: false,
+            },
+            phone_no:{
+                type: DataTypes.STRING,
+                allowNull: false,
             },
             userid:{
                 type: DataTypes.INTEGER,
