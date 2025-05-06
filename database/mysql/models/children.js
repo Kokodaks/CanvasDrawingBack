@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) =>{
                 unique: true,
             },
             address:{
-                type: DataTypes.STRIMG,
+                type: DataTypes.STRING,
                 allowNull: false,
             },
             phone_no:{

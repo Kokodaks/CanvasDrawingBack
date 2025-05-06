@@ -2,9 +2,9 @@ const reconService = require('../service/reconService');
 
 exports.createStrokeData = async(req, res) =>{
     try{
-        const {drawing} = req.body;
+        const {drawing, finalDrawing} = req.body;
         console.log('받은 데이터: ', drawing);
-        const strokeData = await reconService.createStrokeData(drawing);
+        const strokeData = await reconService.createStrokeData(drawing, finalDrawing);
 
         console.log('저장된 데이터: ', strokeData);
         

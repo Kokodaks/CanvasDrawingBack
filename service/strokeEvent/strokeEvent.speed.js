@@ -1,6 +1,6 @@
-exports.findSpeedEvent = async(drawing, DrawingStrokesId) => {
+exports.findSpeedEvent = (finalDrawing, DrawingStrokesId) => {
   //stroke별 속도 계산
-  const strokesWithSpeed = drawing.map(stroke => ({
+  const strokesWithSpeed = finalDrawing.map(stroke => ({
     stroke,
     speed: calculateStrokeSpeed(stroke)
   }));
