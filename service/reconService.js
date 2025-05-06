@@ -1,8 +1,8 @@
 const reconRepo = require('../repo/reconRepo');
 const speed = require('./strokeEvent/strokeEvent.speed');
 const width = require('./strokeEvent/strokeEvent.width');
-const repeat = require('./strokeEvent/strokeEvent.repeat');
-const erase = require('./strokeEvent/strokeEvent.erase');
+const bulk_repeat = require('./strokeEvent/strokeEvent.bulkRepeat');
+const erase_repeat = require('./strokeEvent/strokeEvent.eraseRepeat');
 
 exports.createStrokeData = async(drawing, finalDrawing) =>{
     try{
@@ -14,13 +14,15 @@ exports.createStrokeData = async(drawing, finalDrawing) =>{
         const {slowEvents, fastEvents} = speed.findSpeedEvent(finalDrawing, DrawingStrokesId);
         console.log({"느린 이벤트" : slowEvents, "빠른 이벤트" : fastEvents});
 
-        // 선 굵기 변화
+        // 평균보다 굵거나 얇은 선
         const {thinEvents, thickEvents} = width.findWidthEvent(finalDrawing, DrawingStrokesId);
         console.log({"얇은 선" :  thinEvents, "굵은 선" : thickEvents});
         
-        // 지우고 다시 그림
-        
-        // 반복 그림
+        // 반복적으로 같은 위치에서 그림
+        const { bulkRepeatEvents } = bulk_repeat.findBulkRepeatEvent(drawing, DrawingStrokesId);
+        console.log({"반복 선" : bulkRepeatEvents});
+
+        // 반복적으로 같은 위치에서 그리고 지우기를 반복함        
         
     
         return DrawingStrokes;
