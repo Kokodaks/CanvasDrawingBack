@@ -8,25 +8,17 @@ const { generateSVGPaths, wrapInSVG } = require('./service/svgService');
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 //db 연동
 const sequelize = require('./database/mysql/mysqlConfig.js');
 const connectMongoDB = require('./database/mongodb/mongdbConfig.js');
 connectMongoDB();
 
-
-app.get('/', (req, res) => {
-  res.send('서버가 잘 실행되고 있어!');
-});
-
-app.get('/ping', (req, res) => {
-    res.send('pong!');
-});
-
 let strokeData;
 app.post('/upload', (req, res) => {
     strokeData = req.body;
-    console.log('받은 데이터: ', req.body);
+    console.log('받은 데이터: ', strokeData);
     res.send('ok');
 });
 
@@ -53,7 +45,7 @@ app.get('/svg', (req, res) => {
 });
 
 app.use('/video', require('./routes/videoRoutes.js'));
-
+app.use('/reconstruction', require('./routes/reconRoutes.js'));
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${port}`);
