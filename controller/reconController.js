@@ -2,16 +2,22 @@ const reconService = require('../service/reconService');
 
 exports.createStrokeData = async(req, res) =>{
     try{
-        const drawingBuffer = req.files['drawing'][0].buffer;
-        const finalDrawingBuffer = req.files['finalDrawing'][0].buffer;
+        let drawingBuffer = req.files['drawing'][0].buffer;
+        let finalDrawingBuffer = req.files['finalDrawing'][0].buffer;
         
         const drawing = JSON.parse(drawingBuffer.toString());
         const finalDrawing = JSON.parse(finalDrawingBuffer.toString());
 
+
+        drawingBuffer = null;
+        finalDrawingBuffer = null;
+
         console.log({'drawing': drawing});
         console.log({'finalDrawing' : finalDrawing});
         
-        // const strokeData = await reconService.createStrokeData(drawing, finalDrawing);
+        const strokeData = await reconService.createStrokeData(drawing, finalDrawing);
+        
+        console.log({'saved data' : strokeData});
 
         return res.status(200).json({message: '✅ successfully created stroke data'});
     }catch(error){
