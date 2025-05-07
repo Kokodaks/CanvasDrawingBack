@@ -10,12 +10,10 @@ const eventStrokeSchema = new mongoose.Schema(
             {
                 strokeOrder:{
                     type: Number,
-                    required: true,
                 },
                 event:[
                     {
                         type: String,
-                        required: true,
                     }
                 ],
             }
