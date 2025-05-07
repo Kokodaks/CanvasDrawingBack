@@ -16,10 +16,6 @@ const drawingStrokesSchema = new mongoose.Schema(
                     type : String,
                     required: true,
                 },
-                strokeWidth:{
-                    type : Number,
-                    required: true,
-                },
                 isErasing:{
                     type: Boolean,
                     required: true,
@@ -38,6 +34,10 @@ const drawingStrokesSchema = new mongoose.Schema(
                         t : {
                             type: Number,
                             required: true
+                        },
+                        p : {
+                            type: Number,
+                            required: true,
                         }
                     }
                 ],

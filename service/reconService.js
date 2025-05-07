@@ -19,7 +19,7 @@ exports.createStrokeData = async(drawing, finalDrawing) =>{
         console.log({"얇은 선" :  thinEvents, "굵은 선" : thickEvents});
         
         // 반복적으로 같은 위치에서 그림
-        const { bulkRepeatEvents } = bulk_repeat.findBulkRepeatEvent(drawing, DrawingStrokesId);
+        const { bulkRepeatEvents } = bulk_repeat.findBulkRepeatEvent(finalDrawing, DrawingStrokesId);
         console.log({"반복 선" : bulkRepeatEvents});
 
         // 반복적으로 같은 위치에서 그리고 지우기를 반복함        
