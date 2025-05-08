@@ -1,4 +1,4 @@
-exports.findSpeedEvent = (finalDrawing, DrawingStrokesId) => {
+exports.findSpeedEvent = (finalDrawing) => {
   //stroke별 속도 계산
   const strokesWithSpeed = finalDrawing.map(stroke => ({
     stroke,
@@ -14,8 +14,8 @@ exports.findSpeedEvent = (finalDrawing, DrawingStrokesId) => {
   const fastStrokes = findFastStrokes(strokesWithSpeed, avgSpeed, epsilon);
 
   //느린 이벤트 json, 빠른 이벤트 json 생성
-  const slowEvents = convertToSlowEvent(slowStrokes, DrawingStrokesId);
-  const fastEvents = convertToFastEvent(fastStrokes, DrawingStrokesId);
+  const slowEvents = convertToSlowEvent(slowStrokes);
+  const fastEvents = convertToFastEvent(fastStrokes);
 
   return {slowEvents, fastEvents};
 }
@@ -59,17 +59,15 @@ const findFastStrokes = (strokesWithSpeed, avgSpeed, epsilon) =>{
   return fastStrokes;
 }
 
-const convertToSlowEvent = (slowStrokes, DrawingStrokesId) => {
+const convertToSlowEvent = (slowStrokes) => {
   return slowStrokes.map(stroke => ({
-    drawing: DrawingStrokesId,
     strokeOrder : stroke.strokeOrder,
     event: ["slow"]
   }));
 }
 
-const convertToFastEvent = (fastStrokes, DrawingStrokesId) =>{
+const convertToFastEvent = (fastStrokes) =>{
   return fastStrokes.map(stroke => ({
-    drawing: DrawingStrokesId,
     strokeOrder: stroke.strokeOrder,
     event: ["fast"]
   }));
