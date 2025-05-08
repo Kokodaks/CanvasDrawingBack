@@ -26,6 +26,5 @@ exports.createStrokeData = async(drawing, finalDrawing) =>{
     }catch(error){
         console.log({reconService : error.message});
     }
-
 }
 

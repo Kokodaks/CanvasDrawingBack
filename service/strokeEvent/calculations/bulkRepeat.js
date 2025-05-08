@@ -4,6 +4,7 @@ function findCenters(strokes){
         (sum, point) => {
             return{x: sum.x + point.x, y: sum.y + point.y};
         },
+        //누적 계산하기 전, x하고 y의 초기값
         {x:0, y:0}
     ));
 
@@ -27,7 +28,7 @@ function findClusters (centers, epsilon){
       let foundGroup = false;
         
       for (const group of groups) {
-        const representative = group[0];  // 그룹의 대표 중심
+        const representative = centers[group[0]];  // 그룹의 대표 중심
         const dx = current.x - representative.x;
         const dy = current.y - representative.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -65,6 +66,8 @@ function findRepeatStrokes(clusters, hausdorff_epsilon, finalDrawing){
         const ptsB = strokeB.points.map(p => ({ x: p.x, y: p.y }));
 
         const distance = findHausdorffDistance(ptsA, ptsB);
+
+        console.log(`🧪 ${cluster[i]} ↔ ${cluster[j]} 거리:`, distance);
 
         if (distance < hausdorff_epsilon) {
           if (!validIndices.includes(cluster[i])) validIndices.push(cluster[i]);
