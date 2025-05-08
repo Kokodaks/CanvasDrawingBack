@@ -1,5 +1,6 @@
 const DrawingStrokes = require('../database/mongodb/models/drawingStrokes');
 const EventStrokes = require('../database/mongodb/models/eventStrokes');
+const FinalStrokes = require('../database/mongodb/models/finalStrokes');
 
 exports.createDrawingStrokes = async(drawing) =>{
     const newDrawingStrokes = await new DrawingStrokes({
@@ -9,23 +10,20 @@ exports.createDrawingStrokes = async(drawing) =>{
     return newDrawingStrokes;
 }
 
-exports.createEventStrokes = async(DrawingStrokesId) =>{
+exports.createFinalStrokes = async(drawingid, finalDrawing) =>{
+    const newFinalStrokes = await new FinalStrokes({
+        drawing: drawingid,
+        strokes : finalDrawing
+    }).save();
+
+    return newFinalStrokes;
+}
+
+exports.createStrokeEvents = async(drawingid, drawingEvents) =>{
     const newEventStrokes = await new EventStrokes({
-        drawing : DrawingStrokesId
+        drawing : drawingid,
+        eventStrokes : drawingEvents
     }).save();
 
     return newEventStrokes;
-}
-
-exports.findEventStrokes = async(DrawingStrokesId) => {
-    try{    
-        const eventStrokes = await EventStrokes.findOne({
-            drawing: DrawingStrokesId
-        });
-
-        return eventStrokes;
-    }catch(error){
-        console.error('reconRepo error: ', error);
-        throw error;
-    }
 }

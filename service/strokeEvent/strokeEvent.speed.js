@@ -17,7 +17,7 @@ exports.findSpeedEvent = (finalDrawing) => {
   const slowEvents = convertToSlowEvent(slowStrokes);
   const fastEvents = convertToFastEvent(fastStrokes);
 
-  return {slowEvents, fastEvents};
+  return { slowEvents, fastEvents };
 }
 
 //stroke의 길이와 그려진 시간에 따른 속도 계산
