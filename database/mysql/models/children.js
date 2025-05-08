@@ -16,7 +16,6 @@ module.exports = (sequelize, DataTypes) =>{
             ssn:{
                 type: DataTypes.STRING,
                 allowNull: false,
-                unique: true,
             },
             address:{
                 type: DataTypes.STRING,
