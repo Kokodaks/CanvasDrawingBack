@@ -35,15 +35,15 @@ module.exports = (sequelize, DataTypes) =>{
                 },
                 onDelete: 'CASCADE',
             },
-            personalhistory:{
+            personal_history:{
                 type: DataTypes.STRING,
              
             },
-            Reason:{
+            counseling_Reason:{
                 type: DataTypes.STRING,
              
             },
-            familybackground:{
+            family_background:{
                 type: DataTypes.STRING,
              
             },
