@@ -13,7 +13,7 @@ exports.findWidthEvent = (finalDrawing) => {
     const thinStrokes = finalDrawing.filter(stroke => {
         const pressures = stroke.points.map(p => p.p);
         const avgP = pressures.reduce((sum, p) => sum + p, 0) / pressures.length;
-        return avgP < avgWidth + epsilon;
+        return avgP < avgWidth - epsilon;
     });
     
     const thickEvents = convertToThickEvent(thickStrokes);
