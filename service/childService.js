@@ -2,6 +2,13 @@ const childRepo = require('../repo/childRepo');
 
 exports.createChild = async (childData) => {
     try {
+        // ssn + userid 중복 여부 검사
+        const exists = await childRepo.findChildBySSNAndUser(childData.ssn, childData.userid);
+        if (exists) {
+            throw new Error('Child with this SSN already exists for this user.');
+        }
+
+        // 새 아동 등록
         return await childRepo.createChild(childData);
     } catch (error) {
         throw new Error('Child creation failed: ' + error.message);
@@ -16,14 +23,11 @@ exports.getAllChildrenByUser = async (userid) => {
     }
 };
 
-exports.deleteChildBySSN = async (ssn) => {
+
+exports.deleteChildBySSNAndUser = async (ssn, userid) => {
     try {
-        const deleted = await childRepo.deleteChildBySSN(ssn);
-        if (deleted === 0) {
-            throw new Error('No child found with that SSN');
-        }
-        return true;
+        return await childRepo.deleteChildBySSNAndUser(ssn, userid);
     } catch (error) {
-        throw new Error('Child deletion failed: ' + error.message);
+        throw new Error('Failed to delete child: ' + error.message);
     }
 };
