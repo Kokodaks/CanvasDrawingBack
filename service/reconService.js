@@ -11,19 +11,16 @@ exports.createStrokeData = async(drawing, finalDrawing) =>{
         const DrawingStrokesId = DrawingStrokes._id;
     
         // 평균보다 느리게 그려졌거나 머문 stroke, 빠르게 그려진 stroke
-        const {slowEvents, fastEvents} = speed.findSpeedEvent(finalDrawing, DrawingStrokesId);
+        const {slowEvents, fastEvents} = speed.findSpeedEvent(finalDrawing);
         console.log({"느린 이벤트" : slowEvents, "빠른 이벤트" : fastEvents});
 
         // 평균보다 굵거나 얇은 선
-        const {thinEvents, thickEvents} = width.findWidthEvent(finalDrawing, DrawingStrokesId);
+        const {thinEvents, thickEvents} = width.findWidthEvent(finalDrawing);
         console.log({"얇은 선" :  thinEvents, "굵은 선" : thickEvents});
         
         // 반복적으로 같은 위치에서 그림
-        const { bulkRepeatEvents } = bulk_repeat.findBulkRepeatEvent(finalDrawing, DrawingStrokesId);
-        console.log({"반복 선" : bulkRepeatEvents});
-
-        // 반복적으로 같은 위치에서 그리고 지우기를 반복함        
-        
+        const { repeatEvents } = bulk_repeat.findBulkRepeatEvent(finalDrawing);
+        console.log({"반복 선" : repeatEvents});
     
         return DrawingStrokes;
     }catch(error){

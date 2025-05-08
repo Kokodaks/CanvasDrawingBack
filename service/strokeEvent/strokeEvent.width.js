@@ -1,4 +1,4 @@
-exports.findWidthEvent = (finalDrawing, DrawingStrokesId) => {
+exports.findWidthEvent = (finalDrawing) => {
     const widths = finalDrawing.flatMap(stroke => stroke.points.map(point => point.p));
 
     const avgWidth = widths.reduce((sum, w) => sum + w, 0) / widths.length;
@@ -16,23 +16,21 @@ exports.findWidthEvent = (finalDrawing, DrawingStrokesId) => {
         return avgP < avgWidth + epsilon;
     });
     
-    const thickEvents = convertToThickEvent(thickStrokes, DrawingStrokesId);
-    const thinEvents = convertToThinEvent(thinStrokes, DrawingStrokesId);
+    const thickEvents = convertToThickEvent(thickStrokes);
+    const thinEvents = convertToThinEvent(thinStrokes);
 
     return {thickEvents, thinEvents};
 }
 
-const convertToThinEvent = (thinStrokes, DrawingStrokesId) =>{
+const convertToThinEvent = (thinStrokes) =>{
     return thinStrokes.map(stroke => ({
-        drawing : DrawingStrokesId,
         strokeOrder : stroke.strokeOrder,
         event: ["thin"]
     }));
 }
 
-const convertToThickEvent = (thickStrokes, DrawingStrokesId) => {
+const convertToThickEvent = (thickStrokes) => {
     return thickStrokes.map(stroke => ({
-        drawing : DrawingStrokesId,
         strokeOrder : stroke.strokeOrder,
         event: ["thick"]
     }));

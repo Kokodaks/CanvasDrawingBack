@@ -8,14 +8,14 @@ const eventStrokeSchema = new mongoose.Schema(
         },
         eventStrokes:[
             {
-                strokeOrder:{
-                    type: Number,
+                strokeOrder: {
+                    type:[Number],
+                    required: true,
                 },
-                event:[
-                    {
-                        type: String,
-                    }
-                ],
+                event:{
+                    type:[String],
+                    required: true,
+                }
             }
         ],
     }, 
