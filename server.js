@@ -19,7 +19,7 @@ app.use('/reconstruction', require('./routes/reconRoutes.js'));
 app.use('/downloads', express.static(path.join(__dirname, 'downloads')));
 app.use('/child', require('./routes/childRoutes.js'));
 app.use('/user', require('./routes/userRoutes.js'));
-
+app.use('/test', require('./routes/testRoutes.js'));
 
 
 app.listen(port, '0.0.0.0', () => {
