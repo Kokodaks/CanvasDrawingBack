@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) =>{
                 type: DataTypes.STRING,
              
             },
-            counseling_Reason:{
+            counseling_reason:{
                 type: DataTypes.STRING,
              
             },
