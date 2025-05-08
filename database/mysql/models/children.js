@@ -10,13 +10,12 @@ module.exports = (sequelize, DataTypes) =>{
                 allowNull: false,
             },
             gender:{
-                type : DataTypes.ENUM('female', 'male', '여자', '남자'),
+                type : DataTypes.ENUM('female', 'male'),
                 allowNull: false,
             },
             ssn:{
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING,
                 allowNull: false,
-                unique: true,
             },
             address:{
                 type: DataTypes.STRING,
@@ -34,7 +33,19 @@ module.exports = (sequelize, DataTypes) =>{
                     key:'id',
                 },
                 onDelete: 'CASCADE',
-            }
+            },
+            personal_history:{
+                type: DataTypes.STRING,
+             
+            },
+            counseling_reason:{
+                type: DataTypes.STRING,
+             
+            },
+            family_background:{
+                type: DataTypes.STRING,
+             
+            },
         },
         {
             tableName:'children',
