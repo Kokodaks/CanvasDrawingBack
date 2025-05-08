@@ -1,26 +1,23 @@
-exports.findBulkRepeatEvent = (finalDrawing, DrawingStrokesId) => {
-    const centers = findCenter(finalDrawing);
+const { findCenters, findClusters, findRepeatStrokes, convertToRepeatEvents } = require('./calculations/bulkRepeat');
+
+exports.findBulkRepeatEvent = (finalDrawing) => {
     
+    //각 stroke의 중심값을 찾음
+    const strokes = finalDrawing.map(stroke => stroke.points);
+    const centers = findCenters(strokes);
+    
+    //각 stroke의 중김값들 중 가까운 중심값들을 리스트로 묶어서 저장 
+    //[[0, 4...], [...]]
+    const epsilon = 20;
+    const clusters = findClusters(centers, epsilon);
+
+    //cluster의 유사도를 계산
+    const hausdorff_epsilon = 10;
+    const repeatStrokes = findRepeatStrokes(clusters, hausdorff_epsilon, finalDrawing);
+    
+    const repeatEvents = convertToRepeatEvents(repeatStrokes);
+    return repeatEvents;
 }
 
-//stroke 별 중심 위치 계산
-const findCenter = (finalDrawing) =>{
-    const strokes = finalDrawing.map(stroke => stroke.points);
-    
-    const sumPerStroke = strokes.map(points => points.reduce(
-        (sum, point) => {
-            return{x: sum.x + point.x, y: sum.y + point.y};
-        },
-        {x:0, y:0}
-    ));
 
-    const centerPerStroke = sumPerStroke.map((sum, index) => {
-        const count = strokes[index].length;
-        return{
-            x: sum.x / count,
-            y: sum.y / count
-        }
-    });
-
-    return centerPerStroke;
-};
+  
