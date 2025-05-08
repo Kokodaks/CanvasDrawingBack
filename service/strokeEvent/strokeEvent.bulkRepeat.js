@@ -15,7 +15,7 @@ exports.findBulkRepeatEvent = (finalDrawing) => {
 
 
     //cluster의 유사도를 계산
-    const hausdorff_epsilon = 30;
+    const hausdorff_epsilon = 15;
     const repeatStrokes = findRepeatStrokes(clusters, hausdorff_epsilon, finalDrawing);
     
     const repeatEvents = convertToRepeatEvents(repeatStrokes);
