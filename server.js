@@ -56,7 +56,7 @@ app.get('/svg', (req, res) => {
 app.use('/video', require('./routes/videoRoutes.js'));
 app.use('/downloads', express.static(path.join(__dirname, 'downloads')));
 // app.use('/child', require('./routes/childRoutes.js'));
-// app.use('/user', require('./routes/userRoutes.js'))
+app.use('/user', require('./routes/userRoutes.js'))
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${port}`);
