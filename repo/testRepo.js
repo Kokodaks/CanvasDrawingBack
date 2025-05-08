@@ -42,3 +42,17 @@ exports.updateTestAsCompleted = async (id) => {
     );
     return affectedRows > 0;
 };
+const DrawingQnA = require('../database/mongodb/models/question');
+
+exports.findByTestIdAndType = async (testId, drawingType) => {
+  return await DrawingQnA.findOne({ testId, drawingType });
+};
+
+exports.pushQuestion = async (id, questionObj) => {
+  return await DrawingQnA.findByIdAndUpdate(
+    id,
+    { $push: { questions: questionObj } },
+    { new: true }
+  );
+};
+

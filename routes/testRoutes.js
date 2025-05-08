@@ -10,3 +10,7 @@ router.delete('/deleteTest', testController.deleteTest);
 
 router.get('/getTestBySsn', testController.getTestBySsn);
 module.exports = router;
+
+router.post('/createQnA', testController.createQnA);
+router.post('/addQnA', testController.addQnA);
+router.get('/getQnAByTestId', testController.getQnAByTestId);

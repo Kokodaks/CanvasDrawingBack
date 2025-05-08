@@ -1,5 +1,7 @@
 const testRepo = require('../repo/testRepo');
 const childRepo = require('../repo/childRepo');
+const drawingQnARepo = require('../repo/drawingQnARepo');
+
 
 exports.createTest = async (testData) => {
     const { userid, childid } = testData;
@@ -33,3 +35,25 @@ exports.getTestBySsn = async (name, ssn) => {
 exports.markTestAsCompleted = async (testid) => {
     return await testRepo.updateTestAsCompleted(testid);
 };
+
+
+exports.createQnA = async (testId, childId, drawingType) => {
+    return await drawingQnARepo.createQnA(testId, childId, drawingType);
+  };
+
+exports.addQnA = async (testId, drawingType, question, answer) => {
+    const doc = await drawingQnARepo.findByTestIdAndType(testId, drawingType);
+    if (!doc) throw new Error('Drawing QnA not found');
+  
+    const questionObj = {
+      question,
+      answer,
+      timestamp: new Date()
+    };
+  
+    return await drawingQnARepo.pushQuestion(doc._id, questionObj);
+  };
+  
+  exports.getQnAByTestId = async (testId, drawingType) => {
+    return await drawingQnARepo.findByTestIdAndType(testId, drawingType);
+  };

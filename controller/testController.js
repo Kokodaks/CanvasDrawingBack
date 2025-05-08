@@ -60,3 +60,38 @@ exports.markTestAsCompleted = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+exports.createQnA = async (req, res) => {
+    try {
+      const { testId, childId, drawingType } = req.body;
+      if (!testId || !childId || !drawingType) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+  
+      const result = await testService.createQnA(testId, childId, drawingType);
+      res.status(201).json(result);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+  
+exports.addQnA = async (req, res) => {
+    try {
+      const { testId, drawingType, question, answer } = req.body;
+      const result = await testService.addQnA(testId, drawingType, question, answer);
+      res.status(200).json(result);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
+  exports.getQnAByTestId = async (req, res) => {
+    try {
+      const { testId, drawingType } = req.query;
+      const result = await testService.getQnAByTestId(testId, drawingType);
+      if (!result) return res.status(404).json({ message: 'QnA not found' });
+      res.status(200).json(result);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
