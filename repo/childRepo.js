@@ -7,6 +7,21 @@ exports.findChildBySSNAndUser = async (ssn, userid) => {
     });
 };
 
+exports.findChildByIdAndUser = async (childid, userid) => {
+    const child = await db.Children.findOne({
+        where: { id: childid, userid }
+    });
+    return child;
+};
+
+exports.findChildByNameAndSsn = async (name, ssn) => {
+    return await db.Children.findOne({
+        where: {
+            name,
+            ssn
+        }
+    });
+};
 exports.createChild = async (childData) => {
     return await Children.create(childData);
 };

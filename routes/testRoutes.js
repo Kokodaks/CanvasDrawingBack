@@ -1,19 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const childController = require('../controller/testController');
+const testController = require('../controller/testController'); 
 
+router.post('/createTest', testController.createTest);
 
-router.post('/createTest',
-    
-    childController.createChild);
+router.get('/getAllTestsByUser', testController.getAllTestsByUser); 
 
+router.delete('/deleteTest', testController.deleteTest);
 
-router.get('/getAllChildrenByUser', 
-    
-    childController.getAllChildrenByUser);
-
-router.delete('/deleteChild', 
-    
-    childController.deleteChild);
-
+router.get('/getTestBySsn', testController.getTestBySsn);
 module.exports = router;
