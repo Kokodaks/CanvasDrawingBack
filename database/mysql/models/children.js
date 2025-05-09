@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) =>{
                 },
                 onDelete: 'CASCADE',
             },
-            personal_history:{
+            personal_history_family:{
                 type: DataTypes.STRING,
              
             },
@@ -42,10 +42,7 @@ module.exports = (sequelize, DataTypes) =>{
                 type: DataTypes.STRING,
              
             },
-            family_background:{
-                type: DataTypes.STRING,
-             
-            },
+            
         },
         {
             tableName:'children',

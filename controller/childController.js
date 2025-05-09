@@ -1,6 +1,7 @@
 const childService = require('../service/childService');
 
 
+//아이 생성 
 exports.createChild = async (req, res) => {
     try {
         const newChild = await childService.createChild(req.body);
@@ -10,6 +11,7 @@ exports.createChild = async (req, res) => {
     }
 };
 
+//유저가 가진 모든 아이 반환환
 exports.getAllChildrenByUser = async (req, res) => {
     try {
         const { userid } = req.query;
@@ -24,6 +26,7 @@ exports.getAllChildrenByUser = async (req, res) => {
     }
 };
 
+//해당 유저의 아이 삭제
 exports.deleteChild = async (req, res) => {
     try {
         const { ssn, userid } = req.body;

@@ -1,16 +1,15 @@
-const videoService = require('../service/videoService');
-
+//비디오 업로드 이름 testid 필요
 exports.uploadVideo = async (req, res) => {
   console.log('📥 /video/upload 요청 도착!');
-  const { id, name } = req.body;
+  const { testId, name } = req.body;  
   const file = req.file;
 
-  if (!id || !name || !file) {
-    return res.status(400).json({ error: 'id, name, video 파일이 필요합니다.' });
+  if (!testId || !name || !file) {
+    return res.status(400).json({ error: 'testId, name, video 파일이 필요합니다.' });
   }
 
   try {
-    const savedPath = await videoService.saveVideo({ id, name, file });
+    const savedPath = await videoService.saveVideo({ testId, name, file });
     res.json({
       message: '업로드 성공',
       savedPath
