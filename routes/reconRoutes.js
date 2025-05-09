@@ -13,4 +13,6 @@ router.post('/sendStrokeData',
 // router.get('/getJsonData', reconController.getJsonData);
 // router.get('/getSvgData', reconController.getSvgData);
 
+router.post('/findFinalStrokeData', reconController.findFinalStrokeData);
+
 module.exports = router;

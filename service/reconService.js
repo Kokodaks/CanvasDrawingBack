@@ -2,16 +2,18 @@ const reconRepo = require('../repo/reconRepo');
 const speed = require('./strokeEvent/strokeEvent.speed');
 const width = require('./strokeEvent/strokeEvent.width');
 const bulk_repeat = require('./strokeEvent/strokeEvent.bulkRepeat');
+const mongoose = require('mongoose');
 
 exports.createDrawingStrokes = async(drawing) =>{
     try{
 
         const drawingStrokes = await reconRepo.createDrawingStrokes(drawing);
         const drawingid = drawingStrokes._id;
+        console.log("DrawingStrokes._id : ", drawingid);
         
         return { drawingStrokes, drawingid };
     }catch(error){
-        console.log({"reconService createStrokeData" : error.message});
+        console.log({"reconService createDrawingStrokes" : error.message});
     }
 }
 
@@ -21,9 +23,10 @@ exports.createFinalStrokes= async(drawingid, finalDrawing) =>{
 
         return {finalStrokes};
     }catch(error){
-        console.log({"reconService createFinalStrokeData" : error.message});
+        console.log({"reconService createFinalStrokes" : error.message});
     }
 }
+
 
 exports.createStrokeEvents = async(drawingid, finalDrawing) => {
     try{
@@ -31,12 +34,22 @@ exports.createStrokeEvents = async(drawingid, finalDrawing) => {
         const allEvents = [...slowEvents, ...fastEvents, ...thinEvents, ...thickEvents, ...repeatEvents];
         const noDuplicates = removeDuplicates(allEvents);
         const drawingEvents = await reconRepo.createStrokeEvents(drawingid, noDuplicates);
-
+        
         return { drawingEvents };
     }catch(error){
-        console.log({"reconService createStrokeEvent" : error.message});
+        console.log({"reconService createStrokeEvents" : error.message});
     }
     
+}
+
+exports.findFinalStrokeData=async(drawingid)=> {
+    try{
+        const objectid = new mongoose.Types.ObjectId(drawingid);
+        const finalStrokes = await reconRepo.findFinalStrokeData(objectid);
+        return {finalStrokes};
+    }catch(error){
+        console.log({"reconService findFinalStrokes" : error.message});
+    };
 }
 
 function removeDuplicates (allEvents){

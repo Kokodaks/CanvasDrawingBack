@@ -27,3 +27,8 @@ exports.createStrokeEvents = async(drawingid, drawingEvents) =>{
 
     return newEventStrokes;
 }
+
+exports.findFinalStrokeData = async(objectid) =>{
+    const finalStrokes = await FinalStrokes.findOne({drawing: objectid});
+    return finalStrokes;
+}
