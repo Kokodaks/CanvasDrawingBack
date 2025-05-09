@@ -29,18 +29,20 @@ exports.createStrokeData = async(req, res) =>{
 
         return res.status(200).json({message: '✅ successfully created stroke data'});
     }catch(error){
-        console.log("저장 실패!! : ", error.message);
         return res.status(500).json({message:'❌ controller createStrokeData', error: error.message});
     }
 }
 
-// exports.getJsonData = async(req, res) =>{
-//     try{
-        
-//     }catch(error){
+exports.findFinalStrokeData = async(req, res) => {
+    try{
+        const { drawingid } = req.body;
+        const finalStrokes = await reconService.findFinalStrokeData(drawingid);
+        return res.status(200).json({message: '✅ successfully found stroke data', result : finalStrokes});
+    }catch(error){
+        return res.status(500).json({message:'❌ controller findStrokeData', error: error.message});
+    }
+}
 
-//     }
-// }
 
 // exports.getSvgData = async(req, res) => {
 //     try{
