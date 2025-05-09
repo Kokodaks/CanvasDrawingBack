@@ -1,5 +1,6 @@
 const testService = require('../service/testService');
 
+//검사 생성
 exports.createTest = async (req, res) => {
     try {
         const test = await testService.createTest(req.body);
@@ -9,6 +10,7 @@ exports.createTest = async (req, res) => {
     }
 };
 
+//유저의 모든 검사사 반환
 exports.getAllTestsByUser = async (req, res) => {
     try {
         const { userid } = req.query;
@@ -19,6 +21,7 @@ exports.getAllTestsByUser = async (req, res) => {
     }
 };
 
+//아이id로 검사 찾기
 exports.getTestsByChild = async (req, res) => {
     try {
         const { childid } = req.params;
@@ -29,6 +32,7 @@ exports.getTestsByChild = async (req, res) => {
     }
 };
 
+//해당 유저의 테스트 삭제
 exports.deleteTest = async (req, res) => {
     try {
         const { id, userid } = req.body;
@@ -40,6 +44,7 @@ exports.deleteTest = async (req, res) => {
     }
 };
 
+//주민등록 번호로 Test 반환 - 앱로그인
 exports.getTestBySsn = async (req, res) => {
     try {
         const { name, ssn } = req.query;
@@ -50,6 +55,7 @@ exports.getTestBySsn = async (req, res) => {
     }
 };
 
+// 검사 완료시 요청
 exports.markTestAsCompleted = async (req, res) => {
     try {
         const { testid } = req.body;
@@ -61,6 +67,7 @@ exports.markTestAsCompleted = async (req, res) => {
     }
 };
 
+//질문 생성 요청
 exports.createQnA = async (req, res) => {
     try {
       const { testId, childId, drawingType } = req.body;
@@ -74,7 +81,8 @@ exports.createQnA = async (req, res) => {
       res.status(500).json({ error: err.message });
     }
   };
-  
+
+  //질문 답변 저장
 exports.addQnA = async (req, res) => {
     try {
       const { testId, drawingType, question, answer } = req.body;
@@ -85,6 +93,7 @@ exports.addQnA = async (req, res) => {
     }
   };
 
+  //testid로 질문찾기
   exports.getQnAByTestId = async (req, res) => {
     try {
       const { testId, drawingType } = req.query;

@@ -1,5 +1,6 @@
 const userService = require('../service/userService');
 
+//유저 생성
 exports.createUser = async (req, res) => {
     try {
         const userData = req.body;
@@ -10,6 +11,7 @@ exports.createUser = async (req, res) => {
     }
 };
 
+//유저 삭제
 exports.deleteUser = async (req, res) => {
     try {
         const { license_no } = req.body;
@@ -20,7 +22,26 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
+//email,password로 유저 찾기-로그인
 
+exports.findUserByEmailAndPassword = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email과 password를 모두 입력해주세요.' });
+  }
+
+  const user = await userService.findUserByEmailAndPassword(email, password);
+
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(404).json({ error: '일치하는 유저를 찾을 수 없습니다.' });
+  }
+};
+
+
+//자격증으로 유저 찾기
 exports.findUserByLicenseNo = async (req, res) => {
     try {
         const { license_no } = req.body;
