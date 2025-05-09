@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) =>{
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
             },
+            completedDate: {
+                type: DataTypes.DATEONLY, 
+                allowNull: true
+            },
         },
         {
             tableName:'tests',
