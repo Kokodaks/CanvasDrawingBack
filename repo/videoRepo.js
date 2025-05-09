@@ -1,17 +1,27 @@
 const fs = require('fs');
 const path = require('path');
 
-exports.moveVideo = ({ id, name, file }) => {
+exports.moveVideo = ({ testId, name, file }) => {
   return new Promise((resolve, reject) => {
     const ext = path.extname(file.originalname) || '.mp4';
-    const finalPath = path.join(__dirname, '..', 'downloads', id, file.originalname);
+    const folderPath = path.join(__dirname, '..', 'downloads', String(testId));
 
-    // 이미 원하는 위치에 저장되었으므로 이름 바꾸지 않음
-    // 필요 시 이름 변경 가능:
-    // const newPath = path.join(__dirname, '..', 'downloads', id, `${name}_${Date.now()}${ext}`);
-    // fs.rename(file.path, newPath, ...)
+    // ✅ 1. 폴더 없으면 생성
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
+    }
 
-    // 실제 이동 없이 경로 리턴 (이미 위치 OK)
-    resolve(finalPath);
+    // ✅ 2. 최종 저장 경로 구성 (이름 중복 방지용 name + timestamp 추천)
+    const timestamp = Date.now();
+    const finalFileName = `${name}${ext}`;
+    const finalPath = path.join(folderPath, finalFileName);
+
+    // ✅ 3. 파일 이동 (temp → downloads/{testId}/)
+    fs.rename(file.path, finalPath, (err) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(finalPath);
+    });
   });
 };

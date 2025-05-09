@@ -25,6 +25,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+
+//비디오 업로드
 router.post('/upload', upload.single('video'), videoController.uploadVideo);
 
 module.exports = router;

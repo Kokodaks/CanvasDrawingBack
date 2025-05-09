@@ -18,3 +18,7 @@ exports.deleteUser = async (license_no) => {
 exports.findUserByLicenseNo = async (license_no) => {
     return await userRepo.findByLicenseNo(license_no);
 };
+
+exports.findUserByEmailAndPassword = async (email, password) => {
+    return await userRepo.findByEmailAndPassword(email, password);
+  };

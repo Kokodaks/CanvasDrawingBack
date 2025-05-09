@@ -14,3 +14,15 @@ exports.deleteByLicenseNo = async (license_no) => {
     const result = await db.Users.destroy({ where: { license_no } });
     return result > 0;
 };
+
+
+exports.findByEmailAndPassword = async (email, password) => {
+    const user = await db.Users.findOne({
+      where: {
+        email,
+        password,
+      },
+    });
+    return user;
+  };
+  
