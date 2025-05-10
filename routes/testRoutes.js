@@ -23,3 +23,5 @@ router.post('/addQnA', testController.addQnA);
 
 //TestId로 QnA불러오기
 router.get('/getQnAByTestId', testController.getQnAByTestId);
+
+module.exports = router;
