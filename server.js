@@ -21,6 +21,7 @@ app.use('/child', require('./routes/childRoutes.js'));
 app.use('/user', require('./routes/userRoutes.js'));
 app.use('/test', require('./routes/testRoutes.js'));
 app.use('/htpReport', require('./routes/htpReportRoutes.js'));
+app.use('/ai', require('./routes/aiRoutes.js'));
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${port}`);
