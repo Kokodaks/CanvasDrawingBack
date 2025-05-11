@@ -1,8 +1,8 @@
 const { Op } = require('sequelize');
 const db = require('../database/mysql/models');
 
-exports.create = async ({ name, email, password, license_type, license_no }) => {
-    const user = await db.Users.create({ name, email, password, license_type, license_no });
+exports.create = async ({ name, phone_no, email, password, license_type, license_no }) => {
+    const user = await db.Users.create({ name, phone_no, email, password, license_type, license_no });
     return user;
 };
 
