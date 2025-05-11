@@ -3,13 +3,24 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const path = require('path');
-require('dotenv').config();
+// require('dotenv').config();
+const dotenv = require('dotenv');
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 //db 연동
+
+const env = process.env.NODE_ENV === 'production' ? '.env.prod' : '.env';
+dotenv.config({path: env});
+console.log(`✅ Loaded environment from ${env}`);
+console.log(process.env.MYSQL_USER);
+console.log(process.env.MYSQL_DATABASE);
+console.log(process.env.MYSQL_PASSWORD);
+
+
+
 const sequelize = require('./database/mysql/mysqlConfig.js');
 const connectMongoDB = require('./database/mongodb/mongdbConfig.js');
 connectMongoDB();
