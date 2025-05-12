@@ -11,12 +11,20 @@ exports.createTest = async (testData) => {
         throw new Error('User does not own this child');
     }
 
+    // 🔍 기존에 완료되지 않은 테스트가 있는지 확인
+    const existingTests = await testRepo.findUnfinishedTestByChildId(childid);
+    if (existingTests.length > 0) {
+        throw new Error('이미 생성한 검사가 있습니다.');
+    }
+
     // 🔥 childname과 ssn 자동으로 넣기
     testData.childname = child.name;
-    testData.ssn = child.ssn;  // rrn 또는 ssn 필드명을 child 모델에서 확인 필요
+    testData.ssn = child.ssn;
 
-    return await testRepo.createTest(testData);  
+    return await testRepo.createTest(testData);
 };
+
+
 
 
 exports.getAllTestsByUser = async (userid) => {
