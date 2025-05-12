@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize');
 const dotenv = require('dotenv');
 
-const envFile = process.env.NODE_ENV === 'production' ? '.env.prod' : '.env.dev';
+const envFile = process.env.NODE_ENV === 'production' ? '.env.prod' : '.env';
 dotenv.config({path: envFile});
 
 const env = process.env.NODE_ENV || 'development';
