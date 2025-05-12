@@ -6,13 +6,18 @@ const drawingQnARepo = require('../repo/drawingQnARepo');
 exports.createTest = async (testData) => {
     const { userid, childid } = testData;
 
-    const ownsChild = await childRepo.findChildByIdAndUser(childid, userid);
-    if (!ownsChild) {
+    const child = await childRepo.findChildByIdAndUser(childid, userid);
+    if (!child) {
         throw new Error('User does not own this child');
     }
 
-    return await testRepo.createTest(testData);
+    // 🔥 childname과 ssn 자동으로 넣기
+    testData.childname = child.name;
+    testData.ssn = child.ssn;  // rrn 또는 ssn 필드명을 child 모델에서 확인 필요
+
+    return await testRepo.createTest(testData);  
 };
+
 
 exports.getAllTestsByUser = async (userid) => {
     return await testRepo.getAllTestsByUser(userid);

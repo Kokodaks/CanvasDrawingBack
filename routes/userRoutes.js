@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controller/userController');
 
+
+
 //유저 생성
 router.post('/createUser',
      userController.createUser);
@@ -16,8 +18,13 @@ router.get('/findUser',
     
     userController.findUserByLicenseNo);
 
-module.exports = router;
+
 
 //유저 찾기(이메일&패스워드)
 router.post('/findByEmailAndPassword',
      userController.findUserByEmailAndPassword);
+
+
+
+
+module.exports = router;
