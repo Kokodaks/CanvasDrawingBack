@@ -1,0 +1,40 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v3
+
+    - name: Set up SSH agent
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+    - name: Deploy to EC2 via SSH
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          # EC2 내부 경로에 클론하거나 pull
+          if [ ! -d ~/app ]; then
+            git clone https://github.com/${{ Kokodaks/CanvasDrawingBack.git }} ~/app
+          else
+            cd ~/app && git pull origin main
+          fi
+
+          cd ~/app
+
+          # 기존 컨테이너 종료
+          docker stop drawingi || true
+          docker rm drawingi || true
+
+          # 이미지 빌드 & 컨테이너 실행
+          docker build -t drawingi .
+          docker run -d --name drawingi -p 3000:3000 drawingi
+        EOF
