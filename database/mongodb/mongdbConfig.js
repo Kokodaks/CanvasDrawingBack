@@ -19,7 +19,7 @@ const connectMongoDB = async () => {
     // production 환경일 경우 TLS 인증서 추가
     if (process.env.NODE_ENV === 'production') {
       options.tls = true;
-      options.tlsCAFile = './global-bundle.pem'; // Dockerfile에 반드시 포함!
+      options.tlsCAFile = '/app/global-bundle.pem'; // Dockerfile에 반드시 포함!
     }
 
     await mongoose.connect(process.env.MONGODB_URI, options);
