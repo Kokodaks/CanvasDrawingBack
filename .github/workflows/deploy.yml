@@ -52,5 +52,6 @@ jobs:
             -e MONGODB_PORT="${{ secrets.MONGODB_PORT }}" \
             -e MONGODB_URI="${{ secrets.MONGODB_URI }}" \
             -e MONGODB_USER="${{ secrets.MONGODB_USER }}" \
+            -e NODE_ENV=production \
             drawingi
         EOF
