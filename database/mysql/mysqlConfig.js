@@ -1,8 +1,5 @@
 const { Sequelize } = require('sequelize');
-const dotenv = require('dotenv');
-
-const envFile = process.env.NODE_ENV === 'production' ? '.env.prod' : '.env';
-dotenv.config({path: envFile});
+require('dotenv').config();
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -21,15 +18,6 @@ const configs =  {
     test: {
     },
     production: {
-      username:process.env.MYSQL_USER,
-      password:process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
-      host:process.env.MYSQL_HOST,
-      dialect:"mysql",
-      define: {
-          charset:"utf8mb4",
-          collate: "utf8mb4_unicode_ci"
-      }
     },
 };
 
@@ -50,4 +38,3 @@ sequelize.authenticate()
   });
 
 module.exports = sequelize;
-

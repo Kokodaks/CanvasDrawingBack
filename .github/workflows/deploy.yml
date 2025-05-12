@@ -48,10 +48,7 @@ jobs:
             -e MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}" \
             -e MYSQL_PORT="${{ secrets.MYSQL_PORT }}" \
             -e MYSQL_USER="${{ secrets.MYSQL_USER }}" \
-            -e MONGODB_PASSWORD="${{ secrets.MONGODB_PASSWORD }}" \
-            -e MONGODB_PORT="${{ secrets.MONGODB_PORT }}" \
             -e MONGODB_URI="${{ secrets.MONGODB_URI }}" \
-            -e MONGODB_USER="${{ secrets.MONGODB_USER }}" \
             -e NODE_ENV=production \
             drawingi
         EOF
