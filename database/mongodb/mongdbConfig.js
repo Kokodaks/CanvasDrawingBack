@@ -14,6 +14,7 @@ const connectMongoDB = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       retryWrites: false,
+      authMechanism: 'MONGODB-CR',
     };
 
     // production 환경일 경우 TLS 인증서 추가
