@@ -5,6 +5,14 @@ module.exports = (sequelize, DataTypes) =>{
                 primaryKey: true,
                 autoIncrement:true,
             },
+            childname:{
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            ssn:{
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
             childid:{
                 type: DataTypes.INTEGER,
                 allowNull: false,

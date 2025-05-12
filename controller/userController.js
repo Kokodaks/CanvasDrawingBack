@@ -54,3 +54,26 @@ exports.findUserByLicenseNo = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.updateUser = async (req, res) => {
+    try {
+        const { license_no, name, phone_no, email, password, license_type } = req.body;
+
+        if (!license_no) {
+            return res.status(400).json({ error: 'license_no는 필수입니다.' });
+        }
+
+        const updatedUser = await userService.updateUser({
+            license_no,
+            name,
+            phone_no,
+            email,
+            password,
+            license_type
+        });
+
+        res.status(200).json({ message: 'User updated successfully', data: updatedUser });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};

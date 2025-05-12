@@ -26,3 +26,15 @@ exports.findByEmailAndPassword = async (email, password) => {
     return user;
   };
   
+exports.updateUserByLicenseNo = async ({ license_no, name, phone_no, email, password, license_type }) => {
+    const [affectedRows] = await db.Users.update(
+        { name, phone_no, email, password, license_type },
+        { where: { license_no } }
+    );
+
+    if (affectedRows === 0) {
+        throw new Error('No changes made');
+    }
+
+    return await db.Users.findOne({ where: { license_no } });
+};
