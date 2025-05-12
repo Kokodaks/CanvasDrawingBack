@@ -36,5 +36,10 @@ jobs:
 
           # 이미지 빌드 & 컨테이너 실행
           docker build -t drawingi .
-          docker run -d --name drawingi -p 3000:3000 drawingi
+          docker run -d \
+            --name drawingi \
+            -p 3000:3000 \
+            -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
+            drawingi
+
         EOF
