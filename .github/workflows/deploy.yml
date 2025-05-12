@@ -40,6 +40,7 @@ jobs:
           # Docker run with explicit environment variables
           docker run -d \
             --name drawingi \
+            --network host \
             -p 3000:3000 \
             -e OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" \
             -e MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}" \
