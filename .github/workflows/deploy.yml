@@ -23,7 +23,7 @@ jobs:
         ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           # EC2 내부 경로에 클론하거나 pull
           if [ ! -d ~/app ]; then
-            git clone https://github.com/${{ Kokodaks/CanvasDrawingBack.git }} ~/app
+            git clone https://github.com/${{ github.repository }} ~/app
           else
             cd ~/app && git pull origin main
           fi
