@@ -5,7 +5,7 @@ WORKDIR /app
 
 # 2. 의존성 설치
 COPY package*.json ./
-COPY global-blundle.pem ./global-bundle.pem
+COPY global-bundle.pem ./global-bundle.pem
 RUN npm install
 RUN apt update && apt install -y default-mysql-client
 
