@@ -15,11 +15,6 @@ app.use(express.urlencoded({extended: true}));
 const env = process.env.NODE_ENV === 'production' ? '.env.prod' : '.env';
 dotenv.config({path: env});
 console.log(`✅ Loaded environment from ${env}`);
-console.log(process.env.MYSQL_USER);
-console.log(process.env.MYSQL_DATABASE);
-console.log(process.env.MYSQL_PASSWORD);
-
-
 
 const sequelize = require('./database/mysql/mysqlConfig.js');
 const connectMongoDB = require('./database/mongodb/mongdbConfig.js');
