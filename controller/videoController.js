@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 require('dotenv').config();
 
-const s3 = new AWS.s3();
+const s3 = new AWS.S3();
 
 exports.uploadVideo = async (req, res) => {
   console.log('📥 /video/upload 요청 도착!');
