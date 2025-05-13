@@ -48,6 +48,7 @@ jobs:
             -e MYSQL_PORT="${{ secrets.MYSQL_PORT }}" \
             -e MYSQL_USER="${{ secrets.MYSQL_USER }}" \
             -e MONGODB_URI="${{ secrets.MONGODB_URI }}" \
+            -e S3_BUCKET_NAME="${{ secrets.S3_BUCKET_NAME }}" \
             -e NODE_ENV=production \
             drawingi
         EOF
