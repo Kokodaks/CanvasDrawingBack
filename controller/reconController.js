@@ -2,16 +2,18 @@ const reconService = require('../service/reconService');
 
 exports.createStrokeData = async(req, res) =>{
     try{
+        const testid = req.body.testId;
+        const childid = req.body.childId;
+
         let drawingBuffer = req.files['drawing'][0].buffer;
         let finalDrawingBuffer = req.files['finalDrawing'][0].buffer;
         
         const drawing = JSON.parse(drawingBuffer.toString());
         const finalDrawing = JSON.parse(finalDrawingBuffer.toString());
 
-        // if(drawing === null || finalDrawing === null){
-
-        // }
-
+        if(drawing === null || finalDrawing === null){
+            return res.status(404).json({message : '❌ Incomplete drawing'});            
+        }
 
         drawingBuffer = null;
         finalDrawingBuffer = null;

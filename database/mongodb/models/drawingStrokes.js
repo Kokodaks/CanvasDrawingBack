@@ -2,12 +2,13 @@ const mongoose = require('mongoose');
 
 const drawingStrokesSchema = new mongoose.Schema(
     {
-        testid : {
+        testId : {
             type: Number,
             required: true,
         },
         type : {
             type: String,
+            enum: ['house', 'tree', 'man', 'woman'],
             required: true,
         },
         strokes:[
