@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { INTEGER } = require('sequelize');
 
 const gptAnalysisSchema = new mongoose.Schema({
-  testId: { type: String, required: true },
+  testId: { type: Number, required: true },
   type: {
     type: Number,
     enum: ['house', 'tree', 'man', 'woman'],
