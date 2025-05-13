@@ -8,15 +8,13 @@ const openai = new OpenAI({
 
 const saveDir = path.join(__dirname, '..','ai_uploads');
 
-exports.convertToFile = async(beforeEraseImgBuffer, afterEraseImgBuffer, currentDrawing) => {
+exports.convertToFile = async(duringImgBuffer, currentDrawing) => {
     try{
         
-        const beforeEraseImgPath = path.join(saveDir, 'beforeErase.png');
-        const afterEraseImgPath = path.join(saveDir, 'afterErase.png')
+        const duringImgPath = path.join(saveDir, 'duringImg.png');
         const currentDrawingPath = path.join(saveDir, 'currentDrawing.json');
 
-        fs.writeFileSync(beforeEraseImgPath, beforeEraseImgBuffer);
-        fs.writeFileSync(afterEraseImgPath, afterEraseImgBuffer);
+        fs.writeFileSync(duringImgPath, duringImgBuffer);
         fs.writeFileSync(currentDrawingPath, JSON.stringify(currentDrawing, null, 2));
         
         console.log("Successfully converted and saved to /ai_uploads");

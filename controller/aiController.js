@@ -2,14 +2,13 @@ const aiService = require('../service/aiService');
 
 exports.sendToOpenAi = async(req, res) => {
     try{
-        let beforeEraseImgBuffer = req.files['beforeErase'][0].buffer;
-        let afterEraseImgBuffer = req.files['afterErase'][0].buffer;
+        let duringImgBuffer = req.files['duringImage'][0].buffer;
         let currentDrawingBuffer = req.files['currentDrawing'][0].buffer;
         const currentDrawing = JSON.parse(currentDrawingBuffer.toString());
         console.log({"parsed current drawing " : currentDrawing});
 
         //OpenAi 전송용 파일 처리 및 전송
-        await aiService.convertToFile(beforeEraseImgBuffer, afterEraseImgBuffer, currentDrawing);
+        await aiService.convertToFile(duringImgBuffer, afterEraseImgBuffer, currentDrawing);
         await aiService.sendToOpenAi();
 
         return res.status(200).json({message: '✅ successfully sent capture, before/after images to ai'});

@@ -2,6 +2,14 @@ const mongoose = require('mongoose');
 
 const drawingStrokesSchema = new mongoose.Schema(
     {
+        testid : {
+            type: Number,
+            required: true,
+        },
+        type : {
+            type: String,
+            required: true,
+        },
         strokes:[
             {
                 strokeOrder:{
