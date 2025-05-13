@@ -2,9 +2,14 @@ const mongoose = require('mongoose');
 
 const eventStrokeSchema = new mongoose.Schema(
     {
-        drawing : {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "DrawingStrokes"
+        testId : {
+            type: Number,
+            required: true,
+        },
+        type: {
+            type: String,
+            enum: ['house', 'tree', 'man', 'woman'],
+            required: true,
         },
         eventStrokes:[
             {

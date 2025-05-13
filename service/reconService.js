@@ -4,22 +4,20 @@ const width = require('./strokeEvent/strokeEvent.width');
 const bulk_repeat = require('./strokeEvent/strokeEvent.bulkRepeat');
 const mongoose = require('mongoose');
 
-exports.createDrawingStrokes = async(drawing) =>{
+exports.createDrawingStrokes = async(testId, type, drawing) =>{
     try{
 
-        const drawingStrokes = await reconRepo.createDrawingStrokes(drawing);
-        const drawingid = drawingStrokes._id;
-        console.log("DrawingStrokes._id : ", drawingid);
-        
-        return { drawingStrokes, drawingid };
+        const drawingStrokes = await reconRepo.createDrawingStrokes(testId, type, drawing);
+        return {drawingStrokes};
+
     }catch(error){
         console.log({"reconService createDrawingStrokes" : error.message});
     }
 }
 
-exports.createFinalStrokes= async(drawingid, finalDrawing) =>{
+exports.createFinalStrokes= async(testId, type, finalDrawing) =>{
     try{
-        const finalStrokes = await reconRepo.createFinalStrokes(drawingid, finalDrawing);
+        const finalStrokes = await reconRepo.createFinalStrokes(testId, type, finalDrawing);
 
         return {finalStrokes};
     }catch(error){
@@ -28,7 +26,7 @@ exports.createFinalStrokes= async(drawingid, finalDrawing) =>{
 }
 
 
-exports.createStrokeEvents = async(drawingid, finalDrawing) => {
+exports.createStrokeEvents = async(testId, type, finalDrawing) => {
     try{
         const {slowEvents, fastEvents, thinEvents, thickEvents, repeatEvents} = identifyStrokeEvent(finalDrawing);
         const allEvents = [...slowEvents, ...fastEvents, ...thinEvents, ...thickEvents, ...repeatEvents];

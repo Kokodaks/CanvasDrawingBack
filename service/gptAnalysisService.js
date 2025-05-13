@@ -1,7 +1,7 @@
 const gptAnalysisRepo = require('../repo/gptAnalysisRepo');
 
-exports.saveGptAnalysis = async (data) => {
-  return await gptAnalysisRepo.saveGptAnalysis(data);
+exports.saveGptAnalysis = async (testId, type, data) => {
+  return await gptAnalysisRepo.saveGptAnalysis(testId, type, data);
 };
 
 exports.getGptAnalyses = async (testId, type) => {
