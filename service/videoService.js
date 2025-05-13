@@ -1,4 +1,4 @@
-exports.saveVideo = async ({ testId, name, file }) => {
-  const savedPath = await videoRepo.moveVideo({ testId, name, file });
+exports.saveVideo = async ({ testId, type, file }) => {
+  const savedPath = await videoRepo.moveVideo({ testId, type, file });
   return savedPath;
 };

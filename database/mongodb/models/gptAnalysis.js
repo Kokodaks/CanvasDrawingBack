@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const gptAnalysisSchema = new mongoose.Schema({
-  testId: { type: mongoose.Schema.Types.ObjectId, ref: 'Test', required: true },
+  testId: { type: String, required: true },
   type: {
     type: String,
     enum: ['house', 'tree', 'man', 'woman'],
