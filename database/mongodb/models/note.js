@@ -3,9 +3,8 @@ const mongoose = require('mongoose');
 const noteSchema = new mongoose.Schema(
   {
     testId: {
-      type: String,
+      type: Number,
       required: true,
-      ref: 'Tests',
     },
     type: {
       type: String,
