@@ -89,4 +89,6 @@ router.get('/view/:testId/:type/:filename', (req, res) => {
   }
 });
 
+router.get('/download', videoController.downloadVideo);
+
 module.exports = router;

@@ -13,10 +13,4 @@ router.post('/sendFinalToOpenAi',
 
 module.exports = router;
 
-// router.post('/sendToOpenAi', 
-//     upload.fields([
-//         {name: 'beforeErase'},
-//         {name: 'afterErase'},
-//         {name: 'currentDrawing'}
-//     ]),
-//     aiController.sendToOpenAi);
+

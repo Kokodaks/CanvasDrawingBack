@@ -14,7 +14,7 @@ exports.uploadVideo = async (req, res) => {
 
   try {
     //서버 s3
-    if(process.env.NODE_ENV === production){
+    if(process.env.NODE_ENV === 'production'){
       const params = {
         Bucket: process.env.S3_BUCKET_NAME,
         Key: `videos/${testId}/${type}/${Date.now()}_${file.originalname}`,
@@ -74,7 +74,7 @@ exports.downloadVideo = async(req, res) => {
     res.send(data.body);
 
   }catch(err){
-
+    console.error('❌ 다운로드 실패:', err);
   }
   
 }

@@ -2,8 +2,8 @@ const gptAnalysisService = require('../service/gptAnalysisService');
 
 exports.saveGptAnalysis = async (req, res) => {
   try {
-    const data = req.body;
-    const result = await gptAnalysisService.saveGptAnalysis(data);
+    const {testId, type, data} = req.body;
+    const result = await gptAnalysisService.saveGptAnalysis(testId, type, data);
     res.status(201).json({ message: 'Saved GPT Analysis', data: result });
   } catch (err) {
     res.status(500).json({ error: err.message });
