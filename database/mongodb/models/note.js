@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const noteSchema = new mongoose.Schema(
+const gptAnalysisSchema = new mongoose.Schema(
   {
     testId: {
       type: Number,
@@ -11,13 +11,18 @@ const noteSchema = new mongoose.Schema(
       enum: ['house', 'tree', 'man', 'woman'],
       required: true,
     },
-    notes: [
+    events: [
       {
-        timestamp: {
-          type: String, 
+        event_type: {
+          type: String,
+          enum: ['object', 'repeat', 'hesitation', 'erase', 'emphasis'],
           required: true,
         },
-        content: {
+        description: {
+          type: String,
+          required: true,
+        },
+        video_timestamp: {
           type: String,
           required: true,
         },
@@ -25,11 +30,9 @@ const noteSchema = new mongoose.Schema(
     ],
   },
   {
-    collection: 'notes', 
-    timestamps: true,    
+    collection: 'gptAnalysis',
+    timestamps: true, // createdAt, updatedAt 자동 생성
   }
 );
 
-const Note = mongoose.model('Note', noteSchema);
-
-module.exports = Note;
+module.exports = mongoose.model('GptAnalysis', gptAnalysisSchema);
