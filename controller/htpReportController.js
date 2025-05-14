@@ -1,5 +1,14 @@
 const service = require('../service/htpReportService');
-
+// 초기 데이터 조회 (아동 + 검사자 + QnA)
+exports.getInitData = async (req, res) => {
+  const { testId } = req.params;
+  try {
+    const data = await service.getInitData(Number(testId));
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 //보고서 생성
 exports.createReport = async (req, res) => {
