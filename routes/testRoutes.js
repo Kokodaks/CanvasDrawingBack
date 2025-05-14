@@ -13,7 +13,6 @@ router.delete('/deleteTest', testController.deleteTest);
 
 //ssn으로 테스트 조회
 router.get('/getTestBySsn', testController.getTestBySsn);
-module.exports = router;
 
 //QnA 생성
 router.post('/createQnA', testController.createQnA);
@@ -23,5 +22,8 @@ router.post('/addQnA', testController.addQnA);
 
 //TestId로 QnA불러오기
 router.get('/getQnAByTestId', testController.getQnAByTestId);
+
+//test완료 요청
+router.post('/complete', testController.markTestAsCompleted);
 
 module.exports = router;
