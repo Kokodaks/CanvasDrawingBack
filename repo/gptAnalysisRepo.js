@@ -1,10 +1,10 @@
 const GptAnalysis = require('../database/mongodb/models/gptAnalysis');
 
-exports.saveGptAnalysis = async (testId, type, data) => {
+exports.saveGptAnalysis = async (testId, type, events) => {
   const analysis = new GptAnalysis({
     testId : testId,
     type : type,
-    data : data,
+    events : events,
   });
   return await analysis.save();
 };
