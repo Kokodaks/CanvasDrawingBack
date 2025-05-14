@@ -33,8 +33,8 @@ exports.createStrokeData = async(req, res) =>{
 
 exports.findFinalStrokeData = async(req, res) => {
     try{
-        const { drawingid } = req.body;
-        const finalStrokes = await reconService.findFinalStrokeData(drawingid);
+        const { testId, type } = req.body;
+        const finalStrokes = await reconService.findFinalStrokeData(testId, type);
         return res.status(200).json({message: '✅ successfully found stroke data', result : finalStrokes});
     }catch(error){
         return res.status(500).json({message:'❌ controller findStrokeData', error: error.message});

@@ -2,7 +2,6 @@ const reconRepo = require('../repo/reconRepo');
 const speed = require('./strokeEvent/strokeEvent.speed');
 const width = require('./strokeEvent/strokeEvent.width');
 const bulk_repeat = require('./strokeEvent/strokeEvent.bulkRepeat');
-const mongoose = require('mongoose');
 
 exports.createDrawingStrokes = async(testId, type, drawing) =>{
     try{
@@ -31,7 +30,7 @@ exports.createStrokeEvents = async(testId, type, finalDrawing) => {
         const {slowEvents, fastEvents, thinEvents, thickEvents, repeatEvents} = identifyStrokeEvent(finalDrawing);
         const allEvents = [...slowEvents, ...fastEvents, ...thinEvents, ...thickEvents, ...repeatEvents];
         const noDuplicates = removeDuplicates(allEvents);
-        const drawingEvents = await reconRepo.createStrokeEvents(drawingid, noDuplicates);
+        const drawingEvents = await reconRepo.createStrokeEvents(testId, type, noDuplicates);
         
         return { drawingEvents };
     }catch(error){
@@ -40,16 +39,16 @@ exports.createStrokeEvents = async(testId, type, finalDrawing) => {
     
 }
 
-exports.findFinalStrokeData=async(drawingid)=> {
+exports.findFinalStrokeData=async(testId, type)=> {
     try{
-        const objectid = new mongoose.Types.ObjectId(drawingid);
-        const finalStrokes = await reconRepo.findFinalStrokeData(objectid);
+        const finalStrokes = await reconRepo.findFinalStrokeData(testId, type);
         return {finalStrokes};
     }catch(error){
         console.log({"reconService findFinalStrokes" : error.message});
     };
 }
 
+// reconService 단에서만 작동하는 함수
 function removeDuplicates (allEvents){
     const merged = [];
     for(const {strokeOrder, event} of allEvents){
