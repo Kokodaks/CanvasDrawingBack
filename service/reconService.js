@@ -39,10 +39,13 @@ exports.createStrokeEvents = async(testId, type, finalDrawing) => {
     
 }
 
-exports.findFinalStrokeData=async(testId, type)=> {
+exports.getEventsAndStrokes=async(testId, type)=> {
     try{
-        const finalStrokes = await reconRepo.findFinalStrokeData(testId, type);
-        return {finalStrokes};
+        const finalStrokes = await reconRepo.getFinalStrokes(testId, type);
+        const allStrokes = await reconRepo.getAllStrokes(testId, type);
+        const events = await reconRepo.getEvents(testId, type);
+
+        return {finalStrokes, allStrokes, events};
     }catch(error){
         console.log({"reconService findFinalStrokes" : error.message});
     };

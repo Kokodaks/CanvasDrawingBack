@@ -22,21 +22,24 @@ exports.createStrokeData = async(req, res) =>{
         
         const drawingStrokes = await reconService.createDrawingStrokes(testId, type, drawing);
         const finalStrokes = await reconService.createFinalStrokes(testId, type, finalDrawing);
-        const drawingEvents = await reconService.createStrokeEvents(testId, type, finalDrawing);
+        const events = await reconService.createStrokeEvents(testId, type, finalDrawing);
 
-        console.log({'drawing saved' : drawingStrokes, 'final drawing saved' : finalStrokes, 'drawing events saved' : drawingEvents});
+        console.log({'drawing saved' : drawingStrokes, 'final drawing saved' : finalStrokes, "events saved" : events});
 
-        return res.status(200).json({message: '✅ successfully created stroke data'});
+        return res.status(200).json({message: '✅ successfully created stroke data', 
+            drawingStrokes : drawingStrokes, finalStrokes : finalStrokes, drawingEvents : drawingEvents});
     }catch(error){
         return res.status(500).json({message:'❌ controller createStrokeData', error: error.message});
     }
 }
 
-exports.findFinalStrokeData = async(req, res) => {
+exports.getEventsAndStrokes = async(req, res) => {
     try{
         const { testId, type } = req.body;
-        const finalStrokes = await reconService.findFinalStrokeData(testId, type);
-        return res.status(200).json({message: '✅ successfully found stroke data', result : finalStrokes});
+        const {finalStrokes, allStrokes, events} = await reconService.getEventsAndStrokes(testId, type);
+
+        return res.status(200).json({message: '✅ successfully found stroke data', 
+            finalStrokes : finalStrokes, allStrokes : allStrokes, events : events});
     }catch(error){
         return res.status(500).json({message:'❌ controller findStrokeData', error: error.message});
     }

@@ -32,7 +32,17 @@ exports.createStrokeEvents = async(testId, type, drawingEvents) =>{
     return newEventStrokes;
 }
 
-exports.findFinalStrokeData = async(testId, type) =>{
+exports.getFinalStrokes = async(testId, type) =>{
     const finalStrokes = await FinalStrokes.findOne({testId, type});
     return finalStrokes;
+}
+
+exports.getAllStrokes = async(testId, type) =>{
+    const allStrokes = await DrawingStrokes.findOne({testId, type});
+    return allStrokes;
+}
+
+exports.getEvents = async(testId, type) => {
+    const events = await EventStrokes.findOne({testId, type});
+    return events;
 }

@@ -24,9 +24,6 @@ exports.createTest = async (testData) => {
     return await testRepo.createTest(testData);
 };
 
-
-
-
 exports.getAllTestsByUser = async (userid) => {
     return await testRepo.getAllTestsByUser(userid);
 };
