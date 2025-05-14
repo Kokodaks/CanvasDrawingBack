@@ -10,6 +10,7 @@ exports.createStrokeData = async(req, res) =>{
         
         const drawing = JSON.parse(drawingBuffer.toString());
         const finalDrawing = JSON.parse(finalDrawingBuffer.toString());
+        console.log({"parsed finalDrawing" : finalDrawing, "parsed drawing" : drawing});
 
         if(drawing === null || finalDrawing === null){
             return res.status(404).json({message : '❌ Incomplete drawing'});            
