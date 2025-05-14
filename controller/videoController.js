@@ -1,3 +1,4 @@
+const videoService = require('../service/videoService');
 const AWS = require('aws-sdk');
 require('dotenv').config();
 
