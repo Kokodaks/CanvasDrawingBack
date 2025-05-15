@@ -61,11 +61,14 @@ exports.getEventsAndStrokes=async(testId, type)=> {
 function removeDuplicates (allEvents){
     const merged = [];
     for(const {strokeOrder, event} of allEvents){
-        const existing = merged.find(e => e.strokeOrder === strokeOrder);
+        const strokeOrderKey = JSON.stringify(strokeOrder);
+        const existing = merged.find(e => JSON.stringify(e.strokeOrder) === strokeOrderKey);
+        const normalizedEventArray = Array.isArray(event) ? event : [event];
+
         if(existing){
-            existing.event.push(...event);
+            existing.event.push(...normalizedEventArray);
         }else{
-            merged.push({strokeOrder, event:[...event]});
+            merged.push({strokeOrder, event:[...normalizedEventArray]});
         }
     }
 
