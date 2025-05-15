@@ -13,7 +13,7 @@ RUN apt update && apt install -y default-mysql-client
 COPY . .
 
 # 4. 포트 개방
-EXPOSE 3000
+EXPOSE 5000
 
 # 5. 앱 실행
 CMD ["node", "server.js"]
