@@ -50,7 +50,7 @@ exports.uploadVideo = async (req, res) => {
 
 //웹 --> s3 버킷 요청 api
 exports.downloadVideo = async (req, res) => {
-  const { testId, type } = req.body;
+  const { testId, type } = req.query;
   const range = req.headers.range;
 
   if (!range) {
@@ -63,7 +63,6 @@ exports.downloadVideo = async (req, res) => {
   };
 
   try {
-    // S3에서 객체 목록 가져오기
     const list = await s3.listObjectsV2(params).promise();
 
     if (!list.Contents || list.Contents.length === 0) {
@@ -72,28 +71,23 @@ exports.downloadVideo = async (req, res) => {
 
     const key = list.Contents[0].Key;
 
-    // 전체 파일 크기 확인
     const head = await s3.headObject({
       Bucket: process.env.S3_BUCKET_NAME,
       Key: key,
     }).promise();
 
     const videoSize = head.ContentLength;
-
-    // Range 파싱
     const parts = range.replace(/bytes=/, "").split("-");
     const start = parseInt(parts[0], 10);
     const end = parts[1] ? parseInt(parts[1], 10) : videoSize - 1;
     const chunkSize = end - start + 1;
 
-    // S3에서 부분 범위로 스트리밍 객체 생성
     const stream = s3.getObject({
       Bucket: process.env.S3_BUCKET_NAME,
       Key: key,
       Range: `bytes=${start}-${end}`,
     }).createReadStream();
 
-    // 헤더 설정
     res.writeHead(206, {
       "Content-Range": `bytes ${start}-${end}/${videoSize}`,
       "Accept-Ranges": "bytes",
@@ -102,9 +96,7 @@ exports.downloadVideo = async (req, res) => {
       "Content-Disposition": "inline"
     });
 
-    // 스트리밍 시작
     stream.pipe(res);
-
   } catch (err) {
     console.error('❌ 스트리밍 실패:', err);
     res.status(500).send('서버 오류로 영상을 불러올 수 없습니다.');
