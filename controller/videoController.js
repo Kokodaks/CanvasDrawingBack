@@ -67,7 +67,7 @@ exports.downloadVideo = async(req, res) => {
     const key = list.Contents[0].Key;
 
     const data = await s3.getObject({
-      Bucket: process.env.S3.BUCKET_NAME,
+      Bucket: process.env.S3_BUCKET_NAME,
       Key: key
     }).promise();
     
