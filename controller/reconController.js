@@ -10,7 +10,6 @@ exports.createStrokeData = async(req, res) =>{
         
         const drawing = JSON.parse(drawingBuffer.toString());
         const finalDrawing = JSON.parse(finalDrawingBuffer.toString());
-        console.log({"parsed finalDrawing" : finalDrawing, "parsed drawing" : drawing});
 
         if(drawing === null || finalDrawing === null){
             return res.status(404).json({message : '❌ Incomplete drawing'});            
@@ -24,7 +23,7 @@ exports.createStrokeData = async(req, res) =>{
         const finalStrokes = await reconService.createFinalStrokes(testId, type, finalDrawing);
         const events = await reconService.createStrokeEvents(testId, type, finalDrawing);
 
-        console.log({'drawing saved' : drawingStrokes, 'final drawing saved' : finalStrokes, "events saved" : events});
+        console.log({'drawing saved' : drawingStrokes.strokes.length, 'final drawing saved' : finalStrokes, "events saved" : events});
 
         return res.status(200).json({message: '✅ successfully created stroke data', 
             drawingStrokes : drawingStrokes, finalStrokes : finalStrokes, drawingEvents : drawingEvents});

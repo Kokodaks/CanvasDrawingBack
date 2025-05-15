@@ -31,7 +31,7 @@ exports.createStrokeEvents = async(testId, type, finalDrawing) => {
         const allEvents = [...slowEvents, ...fastEvents, ...thinEvents, ...thickEvents, ...repeatEvents];
         const noDuplicates = removeDuplicates(allEvents);
         const drawingEvents = await reconRepo.createStrokeEvents(testId, type, noDuplicates);
-        
+
         return { drawingEvents };
     }catch(error){
         console.log({"reconService createStrokeEvents" : error.message});
@@ -63,7 +63,7 @@ function removeDuplicates (allEvents){
         }
     }
 
-    return { merged };
+    return merged;
 }
 
 function identifyStrokeEvent (finalDrawing) {
