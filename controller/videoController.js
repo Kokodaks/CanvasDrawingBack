@@ -9,6 +9,9 @@ exports.uploadVideo = async (req, res) => {
   const { testId, type } = req.body;
   const file = req.file;
 
+  console.log('🔥 video req.body:', req.body);
+  console.log('🔥 video req.file:', file);
+
   if (!testId || !type || !file) {
     return res.status(400).json({ error: 'testId, type, video 파일이 필요합니다.' });
   }
@@ -35,11 +38,26 @@ exports.uploadVideo = async (req, res) => {
 
     }else{
       //테스트 환경
-      const savedPath = await videoService.saveVideo({ testId, type, file });
-      res.json({
-        message: '업로드 성공',
-        savedPath
-      });
+      // const savedPath = await videoService.saveVideo({ testId, type, file });
+      // res.json({
+      //   message: '업로드 성공',
+      //   savedPath
+      // });
+
+      const params = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: `videos/${testId}/${type}/${Date.now()}_${file.originalname}`,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+        Metadata: {
+          testId,
+          type
+      }
+    };
+
+    const s3Upload = await s3.upload(params).promise();
+    console.log('✅ S3 업로드 완료:', s3Upload.Location);
+    res.json({ message: '업로드 성공', s3Upload });
 
     }
   } catch (err) {
