@@ -30,7 +30,12 @@ exports.createStrokeEvents = async(testId, type, finalDrawing) => {
         const {slowEvents, fastEvents, thinEvents, thickEvents, repeatEvents} = identifyStrokeEvent(finalDrawing);
         const allEvents = [...slowEvents, ...fastEvents, ...thinEvents, ...thickEvents, ...repeatEvents];
         const noDuplicates = removeDuplicates(allEvents);
+
+        console.log('🧪 저장 전 이벤트:', JSON.stringify(npDuplicates, null, 2));
+
         const drawingEvents = await reconRepo.createStrokeEvents(testId, type, noDuplicates);
+
+
 
         return { drawingEvents };
     }catch(error){
