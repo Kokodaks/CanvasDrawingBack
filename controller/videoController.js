@@ -49,33 +49,56 @@ exports.uploadVideo = async (req, res) => {
 };
 
 //웹 --> s3 버킷 요청 api
-exports.downloadVideo = async(req, res) => {
-  const {testId, type} = req.body;
-  const params = {
-    Bucket: process.env.S3_BUCKET_NAME,
-    Prefix: `videos/${testId}/${type}/`
+exports.downloadVideo = async (req, res) => {
+  const { testId, type } = req.query;
+  const range = req.headers.range;
+
+  if (!range) {
+    return res.status(400).send('❌ Range 헤더가 필요합니다.');
   }
 
-  //Prefix 경로에 있는 파일 하나를 가져옴 (애초에 testId/type 내부에 하나만 저장될 예정)
-  try{
+  const params = {
+    Bucket: process.env.S3_BUCKET_NAME,
+    Prefix: `videos/${testId}/${type}/`,
+  };
+
+  try {
     const list = await s3.listObjectsV2(params).promise();
 
-    if(!list.Contents || list.Contents.length === 0){
-      return res.status(404).json({error : '영상이 없습니다.'});
+    if (!list.Contents || list.Contents.length === 0) {
+      return res.status(404).json({ error: '영상이 없습니다.' });
     }
 
     const key = list.Contents[0].Key;
 
-    const data = await s3.getObject({
-      Bucket: process.env.S3.BUCKET_NAME,
-      Key: key
+    const head = await s3.headObject({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key,
     }).promise();
-    
-    res.set('Content-Type', data.ContentType || 'video/mp4');
-    res.send(data.body);
 
-  }catch(err){
-    console.error('❌ 다운로드 실패:', err);
+    const videoSize = head.ContentLength;
+    const parts = range.replace(/bytes=/, "").split("-");
+    const start = parseInt(parts[0], 10);
+    const end = parts[1] ? parseInt(parts[1], 10) : videoSize - 1;
+    const chunkSize = end - start + 1;
+
+    const stream = s3.getObject({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key,
+      Range: `bytes=${start}-${end}`,
+    }).createReadStream();
+
+    res.writeHead(206, {
+      "Content-Range": `bytes ${start}-${end}/${videoSize}`,
+      "Accept-Ranges": "bytes",
+      "Content-Length": chunkSize,
+      "Content-Type": "video/mp4",
+      "Content-Disposition": "inline"
+    });
+
+    stream.pipe(res);
+  } catch (err) {
+    console.error('❌ 스트리밍 실패:', err);
+    res.status(500).send('서버 오류로 영상을 불러올 수 없습니다.');
   }
-  
-}
+};
