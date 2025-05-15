@@ -85,5 +85,5 @@ function identifyStrokeEvent (finalDrawing) {
     const { repeatEvents } = bulk_repeat.findBulkRepeatEvent(finalDrawing);
     console.log({"반복 선" : repeatEvents});
     
-    return({slowEvents, fastEvents, thinEvents, thickEvents, repeatEvents});
+    return {slowEvents, fastEvents, thinEvents, thickEvents, repeatEvents};
 }
