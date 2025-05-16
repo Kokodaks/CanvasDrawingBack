@@ -8,15 +8,19 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-const saveDir = path.join(__dirname, '..','ai_uploads');
 
-exports.convertFinalToFile = async(finalImageBuffer, finalDrawing) =>{
+exports.convertFinalToFile = async(finalImageBuffer, finalDrawingBuffer) =>{
     try{
-        const finalImgPath = path.join(saveDir, 'finalImg.png');
-        const finalDrawingPath = path.join(saveDir, 'finalDrawing.json');
+        const dir = path.join(__dirname, '..','ai_uploads');
+        if(!fs.existsSync(dir)){
+            fs.mkdirSync(dir, { recursive: true });
+        };
+        const finalImgPath = path.join(dir, 'finalImg.png');
+        const finalDrawingPath = path.join(dir, 'finalDrawing.json');
+        const parsedJson = JSON.parse(finalDrawingBuffer.toString('utf-8'));
         
         fs.writeFileSync(finalImgPath, finalImageBuffer);
-        fs.writeFileSync(finalDrawingPath, JSON.stringify(finalDrawing, null, 2));
+        fs.writeFileSync(finalDrawingPath, JSON.stringify(parsedJson, null, 2));
         console.log("Successfully converted and saved to /ai_uploads");
     }catch(error){
         console.log({message : "aiService convertFinalToFile", error : error.message});
@@ -33,7 +37,7 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, type, te
             finalImage = finalImageBuffer.toString('base64');
             finalDrawingJson = JSON.parse(finalDrawingBuffer.toString());
         }else{
-            this.convertFinalToFile(finalImageBuffer, finalDrawing)
+            this.convertFinalToFile(finalImageBuffer, finalDrawingBuffer);
             const finalImgPath = path.join(__dirname, '../ai_uploads/finalImg.png');
             const finalDrawingPath = path.join(__dirname, '../ai_uploads/finalDrawing.json');
             finalImage = fs.readFileSync(finalImgPath).toString('base64');
@@ -85,7 +89,7 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, type, te
     
             중요: 심리적 해석이나 감정 상태에 대한 추론, 의미 분석 등은 절대 포함하지 마세요. 오직 그림에서 관찰 가능한 객관적인 특성(크기, 위치, 선의 특징 등)만 분석하세요.
     
-            응답은 다음 JSON 형식으로 작성해주세요:
+            응답은 다음 JSON 형식으로 작성해주세요. 단, JSON 마크다운 블록 없이, 순수 JSON만 응답해주세요.:
             {
             "objectiveSummary": "전체 그림에 대한 간략한 요약 (객관적 특성 중심)",
             "objectsTimestamps": [
@@ -137,8 +141,11 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, type, te
     
         const responseContent = response.choices[0].message.content;
         
-        //응답 --> JSON 형식으로 parse
-        const parsedResponse = parseJSONResponse(responseContent);
+        //응답 --> json 객체로 처리가 될 수 있게 markdown 제거
+        const cleanedJsonString = extractJsonFromMarkdown(responseContent);
+
+        //응답 --> JSON 객체로 parse
+        const parsedResponse = parseJSONResponse(cleanedJsonString);
         
         //객체 정보만 추출하여 데이터 구성
         const events = [];
@@ -166,13 +173,20 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, type, te
     }
 }
 
-function parseJSONResponse(responseContent) {
+//gpt 응답에서 마크다운이 있다면, 마크다운 없이 리턴
+function extractJsonFromMarkdown(responseContent){
+    const match = responseContent.match(/```json\s*([\s\S]*?)\s*```/);
+    if(match) return match[1];
+    return responseContent;
+}
+
+function parseJSONResponse(cleanedJsonString) {
     let parsedResponse;
     try{
-        parsedResponse = JSON.parse(responseContent);
+        parsedResponse = JSON.parse(cleanedJsonString);
     }catch(err){
         console.error("JSON 파싱 오류:", err.message);
-        parsedResponse = {error : "JSON 파싱 실패", raw : responseContent};
+        parsedResponse = {error : "JSON 파싱 실패", raw : cleanedJsonString};
     }
     return parsedResponse;
 }
