@@ -29,9 +29,10 @@ exports.createStrokeEvents = async(testId, type, finalDrawing) => {
     try{
         const {slowEvents, fastEvents, thinEvents, thickEvents, repeatEvents} = identifyStrokeEvent(finalDrawing);
         const allEvents = [...slowEvents, ...fastEvents, ...thinEvents, ...thickEvents, ...repeatEvents];
+        console.log("reconService createStrokeEvents allEvents :", allEvents);
         const noDuplicates = removeDuplicates(allEvents);
 
-        console.log('🧪 저장 전 이벤트:', JSON.stringify(npDuplicates, null, 2));
+        console.log('reconService createStrokeEvents 🧪 저장 전 이벤트:', JSON.stringify(noDuplicates, null, 2));
 
         const drawingEvents = await reconRepo.createStrokeEvents(testId, type, noDuplicates);
 
@@ -60,11 +61,14 @@ exports.getEventsAndStrokes=async(testId, type)=> {
 function removeDuplicates (allEvents){
     const merged = [];
     for(const {strokeOrder, event} of allEvents){
-        const existing = merged.find(e => e.strokeOrder === strokeOrder);
+        const strokeOrderKey = JSON.stringify(strokeOrder);
+        const existing = merged.find(e => JSON.stringify(e.strokeOrder) === strokeOrderKey);
+        const normalizedEventArray = Array.isArray(event) ? event : [event];
+
         if(existing){
-            existing.event.push(...event);
+            existing.event.push(...normalizedEventArray);
         }else{
-            merged.push({strokeOrder, event:[...event]});
+            merged.push({strokeOrder, event:[...normalizedEventArray]});
         }
     }
 
@@ -84,5 +88,5 @@ function identifyStrokeEvent (finalDrawing) {
     const { repeatEvents } = bulk_repeat.findBulkRepeatEvent(finalDrawing);
     console.log({"반복 선" : repeatEvents});
     
-    return({slowEvents, fastEvents, thinEvents, thickEvents, repeatEvents});
+    return {slowEvents, fastEvents, thinEvents, thickEvents, repeatEvents};
 }

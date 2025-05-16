@@ -11,7 +11,9 @@ router.post('/', controller.createReport);
 // 수정 (전체 덮어쓰기)
 router.put('/:testId', controller.updateReport);
 
-// 삭제
-router.delete('/:testId', controller.deleteReport);
+// 조회
+router.get('/:testId', controller.getReport);
 
+// 존재 여부 확인
+router.get('/check/:testId', controller.checkExists);
 module.exports = router;

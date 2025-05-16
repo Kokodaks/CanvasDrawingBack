@@ -10,35 +10,44 @@ exports.getInitData = async (req, res) => {
   }
 };
 
-//보고서 생성
 exports.createReport = async (req, res) => {
   try {
-    const report = await service.createReport(req.body);
+    const data = req.body;
+    const report = await service.createReport(data);
     res.status(201).json(report);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-//보고서 수정
 exports.updateReport = async (req, res) => {
-  const { testId } = req.params;
   try {
-    const updated = await service.updateReport(testId, req.body);
-    if (!updated) return res.status(404).json({ error: 'Report not found' });
-    res.status(200).json(updated);
+    const testId = parseInt(req.params.testId);
+    const data = req.body;
+    const report = await service.updateReport(testId, data);
+    if (!report) return res.status(404).json({ message: "Report not found" });
+    res.json(report);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-//보고서 삭제
-exports.deleteReport = async (req, res) => {
-  const { testId } = req.params;
+exports.getReport = async (req, res) => {
   try {
-    const deleted = await service.deleteReport(testId);
-    if (!deleted) return res.status(404).json({ error: 'Report not found' });
-    res.status(200).json({ message: 'Report deleted successfully' });
+    const testId = parseInt(req.params.testId);
+    const report = await service.getReport(testId);
+    if (!report) return res.status(404).json({ message: "Report not found" });
+    res.json(report);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.checkExists = async (req, res) => {
+  try {
+    const testId = parseInt(req.params.testId);
+    const exists = await service.checkExists(testId);
+    res.json({ exists });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
