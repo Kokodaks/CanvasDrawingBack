@@ -9,9 +9,14 @@ exports.createReport = async (data) => {
 };
 
 exports.updateReport = async (testId, data) => {
-  return await repo.updateReport(testId, data);
+  return await repo.updateReportByTestId(testId, data);
 };
 
-exports.deleteReport = async (testId) => {
-  return await repo.deleteReport(testId);
+exports.getReport = async (testId) => {
+  return await repo.getReportByTestId(testId);
+};
+
+exports.checkExists = async (testId) => {
+  const result = await repo.existsByTestId(testId);
+  return result !== null;
 };
