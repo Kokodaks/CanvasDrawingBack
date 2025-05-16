@@ -9,15 +9,21 @@ module.exports = (sequelize, DataTypes) =>{
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            regist_no:{
-                type: DataTypes.INTEGER,
+            gender:{
+                type : DataTypes.ENUM('female', 'male'),
                 allowNull: false,
-                unique: true,
             },
             ssn:{
-                type: DataTypes.INTEGER,
+                type: DataTypes.STRING,
                 allowNull: false,
-                unique: true,
+            },
+            address:{
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            phone_no:{
+                type: DataTypes.STRING,
+                allowNull: false,
             },
             userid:{
                 type: DataTypes.INTEGER,
@@ -27,7 +33,16 @@ module.exports = (sequelize, DataTypes) =>{
                     key:'id',
                 },
                 onDelete: 'CASCADE',
-            }
+            },
+            personal_history_family:{
+                type: DataTypes.STRING,
+             
+            },
+            counseling_reason:{
+                type: DataTypes.STRING,
+             
+            },
+            
         },
         {
             tableName:'children',
