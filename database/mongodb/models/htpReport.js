@@ -1,60 +1,57 @@
 const mongoose = require('mongoose');
 
-const fieldSchema = new mongoose.Schema({
-  present: Boolean,
-  expression: String,
-  interpretation: String
-}, { _id: false });
-
-const drawingAnalysisSchema = new mongoose.Schema({
-  subject: fieldSchema,
-  roof: fieldSchema,
-  wall: fieldSchema,
-  door: fieldSchema,
-  window: fieldSchema,
-  others: fieldSchema,
-  stem: fieldSchema,
-  branch: fieldSchema,
-  crown: fieldSchema,
-  genderExpression: fieldSchema,
-  head: fieldSchema,
-  face: fieldSchema,
-  torso: fieldSchema,
-  arm: fieldSchema,
-  leg: fieldSchema,
-  hand: fieldSchema,
-  foot: fieldSchema,
-  character: fieldSchema,
+const analysisFieldSchema = new mongoose.Schema({
+  expression: String,         // 표현의 특징
+  interpretation: String      // 상징과 해석
 }, { _id: false });
 
 const htpReportSchema = new mongoose.Schema({
   testId: {
     type: Number,
-    required: true,
+    required: true
   },
-  name: String,
-  gender: String,
-  age: Number,
-  birth: String,
-  school: String,
-  testDate: String,
-  examiner: String,
+  
+  // House 분석
+  houseSubject: analysisFieldSchema,
+  houseRoof: analysisFieldSchema,
+  houseWall: analysisFieldSchema,
+  houseDoor: analysisFieldSchema,
+  houseWindow: analysisFieldSchema,
+  houseOthers: analysisFieldSchema,
 
-  reason: String,
-  background: String,
-  familyTree: String,
-  summary: String,
-  overallFeeling: String,
+  // Tree 분석
+  treeSubject: analysisFieldSchema,
+  treeStem: analysisFieldSchema,
+  treeBranch: analysisFieldSchema,
+  treeCrown: analysisFieldSchema,
+  treeOthers: analysisFieldSchema,
 
-  house: {
-    analysis: drawingAnalysisSchema
-  },
-  tree: {
-    analysis: drawingAnalysisSchema
-  },
-  person: {
-    analysis: drawingAnalysisSchema
-  }
+  // Man 분석
+  manSubject: analysisFieldSchema,
+  manGenderExpression: analysisFieldSchema,
+  manHead: analysisFieldSchema,
+  manFace: analysisFieldSchema,
+  manTorso: analysisFieldSchema,
+  manArm: analysisFieldSchema,
+  manLeg: analysisFieldSchema,
+  manHand: analysisFieldSchema,
+  manFoot: analysisFieldSchema,
+  manOthers : analysisFieldSchema,
+  manCharacter: analysisFieldSchema,
+
+  // Woman 분석
+  womanSubject: analysisFieldSchema,
+  womanGenderExpression: analysisFieldSchema,
+  womanHead: analysisFieldSchema,
+  womanFace: analysisFieldSchema,
+  womanTorso: analysisFieldSchema,
+  womanArm: analysisFieldSchema,
+  womanLeg: analysisFieldSchema,
+  womanHand: analysisFieldSchema,
+  womanFoot: analysisFieldSchema,
+  womanOthers : analysisFieldSchema,
+  womanCharacter: analysisFieldSchema
+
 
 }, { timestamps: true });
 

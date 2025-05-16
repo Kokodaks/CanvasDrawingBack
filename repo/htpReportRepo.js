@@ -34,13 +34,14 @@ exports.createReport = async (data) => {
   return await HTPReport.create(data);
 };
 
-exports.updateReport = async (testId, data) => {
-  return await HTPReport.findOneAndUpdate({ testId }, data, {
-    new: true,
-    overwrite: true,
-  });
+exports.updateReportByTestId = async (testId, data) => {
+  return await HTPReport.findOneAndUpdate({ testId }, data, { new: true });
 };
 
-exports.deleteReport = async (testId) => {
-  return await HTPReport.findOneAndDelete({ testId });
+exports.getReportByTestId = async (testId) => {
+  return await HTPReport.findOne({ testId });
+};
+
+exports.existsByTestId = async (testId) => {
+  return await HTPReport.exists({ testId });
 };
