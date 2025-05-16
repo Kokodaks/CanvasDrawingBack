@@ -38,27 +38,12 @@ exports.uploadVideo = async (req, res) => {
 
     }else{
       //테스트 환경
-      // const savedPath = await videoService.saveVideo({ testId, type, file });
-      // res.json({
-      //   message: '업로드 성공',
-      //   savedPath
-      // });
-
-      const params = {
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: `videos/${testId}/${type}/${Date.now()}_${file.originalname}`,
-        Body: file.buffer,
-        ContentType: file.mimetype,
-        Metadata: {
-          testId,
-          type
-      }
-    };
-
-    const s3Upload = await s3.upload(params).promise();
-    console.log('✅ S3 업로드 완료:', s3Upload.Location);
-    res.json({ message: '업로드 성공', s3Upload });
-
+      const savedPath = await videoService.saveVideo({ testId, type, file });
+      console.log(' videoController upload Video ✅ 로컬 폴더에 비디오 완료');
+      res.json({
+        message: '업로드 성공',
+        savedPath
+      });
     }
   } catch (err) {
     console.error('❌ 저장 실패:', err);

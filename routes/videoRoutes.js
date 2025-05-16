@@ -14,29 +14,27 @@ if(process.env.NODE_ENV === 'production'){
 
 }else{
   //테스트 (프로젝트 내부에 경로 저장용)
-  // storage = multer.diskStorage({
-  //   destination: (req, file, cb) => {
-  //     const { testId, type } = req.body;
-  //     if (!testId || !type) return cb(new Error('testId와 type이 필요합니다'), null);
+  storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      const { testId, type } = req.body;
+      if (!testId || !type) return cb(new Error('testId와 type이 필요합니다'), null);
   
-  //     const dir = path.join(__dirname, '..', 'downloads', testId, type, 'video');
-  //     if (!fs.existsSync(dir)) {
-  //       fs.mkdirSync(dir, { recursive: true });
-  //     }
+      const dir = path.join(__dirname, '..', 'downloads', testId, type, 'video');
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
   
-  //     cb(null, dir);
-  //   },
-  //   filename: (req, file, cb) => {
-  //     const { testId, type } = req.body;
-  //     const ext = path.extname(file.originalname) || '.mp4';
-  //     const filename = `${testId}_${type}${ext}`;
-  //     cb(null, filename); // 예: 123_house.mp4
-  //   }
-  // });
-  
-  
-  upload = multer({ storage : multer.memoryStorage() });
-  
+      cb(null, dir);
+    },
+    filename: (req, file, cb) => {
+      const { testId, type } = req.body;
+      const ext = path.extname(file.originalname) || '.mp4';
+      const filename = `${testId}_${type}${ext}`;
+      cb(null, filename); // 예: 123_house.mp4
+    }
+  });
+
+  upload = multer({storage});
 }
 
 //비디오 업로드
