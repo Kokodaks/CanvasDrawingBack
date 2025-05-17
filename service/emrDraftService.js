@@ -2,9 +2,9 @@ const axios = require('axios');
 require('dotenv').config();
 
 // 모델 임포트
-const GptAnalysis = require('../database/mongodb/models/GptAnalysis');
-const Note = require('../database/mongodb/models/Note');
-const HTPReport = require('../database/mongodb/models/HTPReport');
+const GptAnalysis = require('../database/mongodb/models/gptAnalysis');
+const Note = require('../database/mongodb/models/note');
+const HTPReport = require('../database/mongodb/models/htpReport');
 
 /**
  * GPT 응답을 HTPReport 모델 형식으로 변환하는 함수
@@ -314,7 +314,7 @@ ${counselorNotes}
 /**
  * API 라우터에서 사용할 엔드포인트
  */
-const setupHtpReportRoutes = (router) => {
+const setupEmrDraftRoutes = (router) => {
   router.post('/generate-htp-report', async (req, res) => {
     try {
       const { testId, types } = req.body;
@@ -331,5 +331,5 @@ const setupHtpReportRoutes = (router) => {
 
 module.exports = {
   generateHTPReport,
-  setupHtpReportRoutes
+  setupEmrDraftRoutes
 };
