@@ -11,6 +11,9 @@ router.post('/', controller.createReport);
 // 수정 (전체 덮어쓰기)
 router.put('/:testId', controller.updateReport);
 
+// gpt 답변 수정
+router.put('/gpt/:testId', controller.updateReport);
+
 // 조회
 router.get('/:testId', controller.getReport);
 
