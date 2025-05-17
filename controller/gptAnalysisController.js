@@ -22,7 +22,7 @@ exports.getGptAnalysis = async (req, res) => {
 
     const parsedTestId = Number(testId); // 여기서 명확하게 변환
 
-    const results = await gptAnalysisService.getGptAnalysis(parsedTestId, type);
+    const results = await gptAnalysisService.getGptAnalyses(parsedTestId, type);
     res.status(200).json({ data: results });
   } catch (err) {
     res.status(500).json({ error: err.message });
