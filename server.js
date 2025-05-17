@@ -30,7 +30,7 @@ app.use('/ai', require('./routes/aiRoutes.js'));
 app.use('/note', require('./routes/noteRoutes.js'));
 // gpt답변 저장
 app.use('/gpt', require('./routes/gptAnalysisRoutes.js'));  // ✅ 올바른 코드
-
+app.use('/emr-draft', require('./routes/emrDraftRoutes.js')); 
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running at http://0.0.0.0:${port}`);
