@@ -1,4 +1,4 @@
-const GptAnalysis = require('../database/mongodb/models/gptAnalysis');
+const GptAnalysis = require('../database/mongodb/models/GptAnalysis');
 
 /**
  * GPT 분석 결과를 데이터베이스에 저장
