@@ -9,9 +9,9 @@ const openai = new OpenAI({
 });
 
 
-exports.convertFinalToFile = async(finalImageBuffer, finalDrawingBuffer) =>{
+exports.convertFinalToFile = async(finalImageBuffer, finalDrawingBuffer, testId, type) =>{
     try{
-        const dir = path.join(__dirname, '..','ai_uploads');
+        const dir = path.join(__dirname, '..','ai_uploads', String(testId), type);
         if(!fs.existsSync(dir)){
             fs.mkdirSync(dir, { recursive: true });
         };
@@ -37,9 +37,9 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, type, te
             finalImage = finalImageBuffer.toString('base64');
             finalDrawingJson = JSON.parse(finalDrawingBuffer.toString());
         }else{
-            this.convertFinalToFile(finalImageBuffer, finalDrawingBuffer);
-            const finalImgPath = path.join(__dirname, '../ai_uploads/finalImg.png');
-            const finalDrawingPath = path.join(__dirname, '../ai_uploads/finalDrawing.json');
+            this.convertFinalToFile(finalImageBuffer, finalDrawingBuffer, testId, type);
+            const finalImgPath = path.join(__dirname, `../ai_uploads/${testId}/${type}/finalImg.png`);
+            const finalDrawingPath = path.join(__dirname, `../ai_uploads/${testId}/${type}/finalDrawing.json`);
             finalImage = fs.readFileSync(finalImgPath).toString('base64');
             finalDrawingJson = JSON.parse(fs.readFileSync(finalDrawingPath, 'utf-8'));
         }
