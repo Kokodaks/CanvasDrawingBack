@@ -9,9 +9,9 @@ const openai = new OpenAI({
 });
 
 
-exports.convertFinalToFile = async(finalImageBuffer, finalDrawingBuffer) =>{
+exports.convertFinalToFile = async(finalImageBuffer, finalDrawingBuffer, testId, type) =>{
     try{
-        const dir = path.join(__dirname, '..','ai_uploads');
+        const dir = path.join(__dirname, '..','ai_uploads', String(testId), type);
         if(!fs.existsSync(dir)){
             fs.mkdirSync(dir, { recursive: true });
         };
@@ -37,9 +37,9 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, type, te
             finalImage = finalImageBuffer.toString('base64');
             finalDrawingJson = JSON.parse(finalDrawingBuffer.toString());
         }else{
-            this.convertFinalToFile(finalImageBuffer, finalDrawingBuffer);
-            const finalImgPath = path.join(__dirname, '../ai_uploads/finalImg.png');
-            const finalDrawingPath = path.join(__dirname, '../ai_uploads/finalDrawing.json');
+            this.convertFinalToFile(finalImageBuffer, finalDrawingBuffer, testId, type);
+            const finalImgPath = path.join(__dirname, `../ai_uploads/${testId}/${type}/finalImg.png`);
+            const finalDrawingPath = path.join(__dirname, `../ai_uploads/${testId}/${type}/finalDrawing.json`);
             finalImage = fs.readFileSync(finalImgPath).toString('base64');
             finalDrawingJson = JSON.parse(fs.readFileSync(finalDrawingPath, 'utf-8'));
         }
@@ -66,44 +66,84 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, type, te
             break;
         }
         
-        const prompt = `사용자는 현재 HTP 검사 중 ${objectDescription}을(를) 완성했습니다.
-            이 그림은 7-13세 아동이 그린 것으로, 심리상담사가 활용할 분석 자료입니다.
-    
-            제공된 이미지와 좌표 데이터를 분석하여 다음 정보를 추출해주세요:
-    
-            1. **객체 분석** (그림에 대한 객관적인 분석만 수행하며, 심리적 해석이나 의미 분석은 절대 포함하지 마세요):
-            - 주요 객체 식별 및 시간 순서대로 나열 (정확한 타임스탬프 포함)
-            - 각 객체의 객관적 특성: 
-                * 크기(작음/중간/큼)
-                * 위치(중앙/상단/하단/좌측/우측)
-                * 선의 특성(굵기, 압력, 끊김 여부)
-                * 상세 특징(형태, 비율, 구조적 특성)
-    
-            - 주요 관찰 대상: ${objectElements}
-    
-            2. **타임스탬프 생성 규칙**:
-            - 모든 타임스탬프는 정확히 MM:SS 형식으로 작성 (예: "01:23")
-            - 각 객체가 그려진 정확한 시작 시간을 기록
-            - 여러 획(stroke)으로 구성된 객체의 경우, 첫 번째 획의 시작 시간 사용
-            - 획의 시작 시간은 strokeStartTime 값을 기준으로 변환
-    
-            중요: 심리적 해석이나 감정 상태에 대한 추론, 의미 분석 등은 절대 포함하지 마세요. 오직 그림에서 관찰 가능한 객관적인 특성(크기, 위치, 선의 특징 등)만 분석하세요.
-    
-            응답은 다음 JSON 형식으로 작성해주세요. 단, JSON 마크다운 블록 없이, 순수 JSON만 응답해주세요.:
-            {
-            "objectiveSummary": "전체 그림에 대한 간략한 요약 (객관적 특성 중심)",
-            "objectsTimestamps": [
-                {
-                "timestamp": "MM:SS",
-                "event": "객체와 그 특성에 대한 상세 설명 (크기, 위치, 선의 특성, 상세 특징 등)",
-                "type": "object"
-                }
-            ]
-        }`;
+        const prompt = `    사용자는 현재 HTP 검사 중 ${objectDescription}을(를) 완성했습니다.
+    이 그림은 7-13세 아동이 그린 것으로, 심리상담사가 활용할 분석 자료입니다.
+
+    제공된 이미지와 좌표 데이터를 분석하여 다음 정보를 추출해주세요:
+
+    1. **객체 분석** (그림에 대한 객관적인 분석만 수행하며, 심리적 해석이나 의미 분석은 절대 포함하지 마세요):
+        - 주제인 "${objectDescription}"과 직접 관련된 주요 객체만 식별하고 시간 순서대로 나열하세요
+        - "${objectDescription}" 주제와 관련 없는 객체는 무시하세요
+        - 식별된 각 객체의 객관적 특성을 항상 다음 순서로 설명하세요: 
+            * 크기(작음/중간/큼)
+            * 위치(중앙/상단/하단/좌측/우측)
+            * 선의 특성(굵기, 압력, 끊김 여부)
+            * 상세 특징(형태, 비율, 구조적 특성)
+
+        - 반드시 포함해야 할 주요 관찰 대상: ${objectElements}
+
+    2. **분석 방법의 순서**:
+        - 먼저 이미지만 보고 객체를 식별하세요 (좌표 데이터를 보기 전에)
+        - 객체 식별 후, 좌표 데이터(획정보)를 분석하여 객체가 그려진 시간을 결정하세요
+        - 좌표 데이터는 객체를 인식하기 위한 것이 아니라, 객체가 언제 그려졌는지 알기 위한 지표입니다
+        - 획정보를 토대로 객체를 예측하지 말고, 그림을 보고 객체를 예측한 후 획정보로 그 객체가 그려진 시간을 예측하세요
+
+    3. **타임스탬프 생성 규칙**:
+        - 모든 타임스탬프는 밀리초(ms) 단위의 숫자 값 그대로 사용하세요
+        - 그림 그리기 화면에 진입한 시점이 "0"입니다
+        - 제공된 strokeStartTime 값은 이미 화면 진입 시점(0)으로부터의 경과 밀리초를 나타냅니다
+        - 각 객체가 그려진 정확한 시작 시간을 milliseconds 단위 그대로 기록하세요
+        - 여러 획(stroke)으로 구성된 객체의 경우, 해당 객체의 첫 번째 획의 시작 시간을 사용하세요
+
+    4. **응답 포맷 가이드**:
+        - 모든 응답은 반드시 한글로만 작성하세요
+        - objectiveSummary: 항상 100단어 이내로 간결하게 작성하고, 주제 관련 객체만 언급하세요
+        - objectsTimestamps: 각 객체에 대한 설명은 항상 다음 패턴을 따르세요:
+            "[객체 이름]이(가) 그려졌습니다. 크기는 [크기], 위치는 [위치]입니다. 선의 특성은 [선 특성]이며, [상세 특징]의 특징을 보입니다."
+
+    중요:
+    1. 심리적 해석이나 감정 상태에 대한 추론, 의미 분석 등은 절대 포함하지 마세요
+    2. 오직 그림에서 관찰 가능한 객관적인 특성(크기, 위치, 선의 특징 등)만 분석하세요
+    3. 주제와 관련된 객체만 식별하세요 (예: "${objectDescription}" 주제라면 ${objectElements}에 해당하는 요소들에 집중)
+    4. 타임스탬프는 반드시 밀리초 단위의 숫자로만 표시하세요 (MM:SS 형식으로 변환하지 마세요)
+    5. 특히 객체가 처음 등장하는 시점의 strokeStartTime을 그대로 timestamp 필드에 입력하세요
+    6. 좌표 데이터(획정보)는 오직 타임스탬프를 결정하기 위해서만 사용하고, 객체 식별에는 사용하지 마세요
+    7. 모든 응답은 정해진 형식을 엄격히 따라 일관성을 유지하세요
+    8. 모든 응답은 반드시 한글로만 작성하세요. 영어로 작성하지 마세요.
+
+    예시 응답 형식:
+    {
+      "objectiveSummary": "이 그림에는 중앙에 크기가 큰 나무 기둥과 상단에 중간 크기의 수관이 그려져 있습니다. 나무 옆에는 작은 새가 그려져 있으며, 하단에는 뿌리와 작은 꽃들이 표현되어 있습니다.",
+      "objectsTimestamps": [
+        {
+          "timestamp": 5023,
+          "event": "나무 기둥이 그려졌습니다. 크기는 큼, 위치는 중앙입니다. 선의 특성은 굵고 끊김 없는 압력이 강한 선이며, 수직으로 곧게 뻗은 형태의 특징을 보입니다.",
+          "type": "object"
+        },
+        {
+          "timestamp": 18456,
+          "event": "나뭇잎(수관)이 그려졌습니다. 크기는 중간, 위치는 상단입니다. 선의 특성은 가볍고 곡선적인 선이며, 둥근 형태로 기둥 위에 균형있게 배치된 특징을 보입니다.",
+          "type": "object"
+        }
+      ]
+    }
+
+    응답은 다음 JSON 형식으로 작성해주세요. 단, JSON 마크다운 블록 없이, 순수 JSON만 응답해주세요:
+    {
+      "objectiveSummary": "전체 그림에 대한 간략한 요약 (주제 관련 객체의 객관적 특성 중심)",
+      "objectsTimestamps": [
+        {
+          "timestamp": 숫자값(밀리초),
+          "event": "주제 관련 객체와 그 특성에 대한 상세 설명 (크기, 위치, 선의 특성, 상세 특징 등)",
+          "type": "object"
+        }
+      ]
+    }`;
+
     
         //좌표 json
         const response = await openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4o-mini",
             messages:[
                 {
                     role: "user",
@@ -137,6 +177,8 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, type, te
                 }
             ],
             max_tokens:1000,
+            temperature: 0.2,
+            seed: 123456,
         });
     
         const responseContent = response.choices[0].message.content;
@@ -212,4 +254,3 @@ const saveToGptAnalysis = async(events, type, testId, parsedResponse) =>{
         console.warn("저장할 이벤트 데이터가 없습니다");
     }
 }
-
