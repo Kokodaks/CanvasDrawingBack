@@ -115,7 +115,7 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, type, te
     
         //좌표 json
         const response = await openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4.1-mini",
             messages:[
                 {
                     role: "user",
