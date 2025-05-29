@@ -117,7 +117,7 @@ STEP 4: 시간 추출
 }`;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4.1-mini",
+            model: "gpt-4o",
             messages: [
                 {
                     role: "user",
