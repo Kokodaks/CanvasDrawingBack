@@ -65,38 +65,35 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, testId, 
         const prompt = `사용자는 현재 HTP 검사 중 ${objectDescription}을(를) 완성했습니다.
 이 그림은 7-13세 아동이 그린 것으로, 심리상담사가 활용할 분석 자료입니다.
 
-**핵심 목표: 각 객체가 그려진 정확한 시간을 찾기 위해 좌표 데이터와 이미지를 정밀 매칭**
+**핵심 목표: 각 개별 객체가 실제로 그려진 정확한 시간 찾기**
 
-**분석 프로세스 (반드시 이 순서로 진행):**
+**좌표 데이터 구조 이해:**
+- 배열 형태로 각 획(stroke)이 개별 객체로 저장됨
+- 각 stroke 객체의 최상위 레벨에 "strokeStartTime" 필드 존재 (밀리초 단위)
+- "strokeOrder" 필드로 그려진 순서 확인 가능
+- "points" 배열에 실제 x, y 좌표들이 저장됨
+- "isErasing": false인 stroke만 분석 (지우개 제외)
 
-STEP 1: 좌표 데이터 전처리
-- 모든 stroke의 x, y 좌표 범위와 strokeStartTime 추출
-- 좌표 기준으로 stroke들을 공간적 클러스터 그룹핑
-- 각 클러스터의 중심점과 범위 계산
+**분석 방법:**
+1. **시간 추출**: 각 stroke 객체에서 strokeStartTime 값을 직접 읽어와서 MM:SS로 변환
+   - 예: strokeStartTime: 2917 → 2917밀리초 → 00:02 (2.917초 ≈ 3초)
+   - 예: strokeStartTime: 7500 → 7500밀리초 → 00:07 (7.5초)
 
-STEP 2: 이미지-좌표 매핑
-- 이미지에서 관찰되는 각 객체의 시각적 위치를 좌표 범위로 추정
-- 예: "상단 중앙의 삼각형" → X: 200-400, Y: 50-150 범위 예상
+2. **객체 그룹핑**: 
+   - strokeOrder 순서와 strokeStartTime을 함께 고려
+   - 시간적으로 연속된 stroke들 (5초 이내)을 하나의 드로잉 세션으로 간주
+   - points 배열의 좌표를 보고 공간적 연관성 판단
 
-STEP 3: 클러스터-객체 매칭  
-- STEP 1의 좌표 클러스터와 STEP 2의 객체 위치를 매칭
-- 공간적 일치도가 높은 클러스터를 해당 객체의 stroke 그룹으로 확정
-
-STEP 4: 시간 추출
-- 확정된 각 stroke 그룹에서 최초 strokeStartTime 추출 및 MM:SS 변환
-
-**매칭 기준:**
-- 동일 객체 내 stroke간 최대 거리: 일반적으로 50-100px 이내
-- 시간적 연속성: 같은 객체 내 stroke들은 대부분 시간적으로 근접하게 그려짐
-- 공간적 클러스터링: 좌표상 가까운 stroke들을 먼저 그룹화
+3. **객체 매칭**: 각 드로잉 세션이 이미지의 어떤 객체에 해당하는지 판단
+   - 각 객체의 첫 번째 stroke의 strokeStartTime을 해당 객체 시작 시간으로 설정
 
 **객체 식별 대상:** ${objectElements}
 
-**절대 준수사항:**
-- 반드시 위 4단계 순서대로 분석 진행
-- strokeStartTime 값을 정확히 MM:SS로 변환 (예: 2340ms → 00:02)
-- 추측하지 말고 좌표 데이터와 정확히 일치하는 stroke만 매칭
-- 심리적 해석 금지, 오직 객관적 관찰만
+**중요 규칙:**
+- strokeStartTime 값을 정확히 MM:SS로 변환 (반올림: 2917ms → 00:03)
+- 창문 두 개, 눈 두 개 등은 각각 별개의 객체로 구분
+- isErasing이 true인 stroke은 무시
+- strokeOrder 순서도 함께 고려하여 그려진 흐름 파악
 
 응답은 다음 JSON 형식으로 작성해주세요. JSON 마크다운 없이 순수 JSON만 응답해주세요:
 {
@@ -107,17 +104,11 @@ STEP 4: 시간 추출
       "event": "객체명 - 간단한 특성",
       "type": "object"
     }
-  ],
-  "analysisSteps": {
-    "step1": "좌표 클러스터링 결과 요약",
-    "step2": "이미지 객체 위치 추정 결과",  
-    "step3": "클러스터-객체 매칭 결과",
-    "step4": "최종 시간 추출 결과"
-  }
+  ]
 }`;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4.1-mini",
             messages: [
                 {
                     role: "user",
