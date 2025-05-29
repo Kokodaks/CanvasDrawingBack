@@ -62,34 +62,35 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, testId, 
                 break;
         }
 
-        const prompt = `${objectDescription} 그림에서 각 객체가 언제 그려졌는지 정확한 시간을 찾아주세요.
+        const prompt = `${objectDescription} 그림 분석:
 
-**핵심 규칙:**
-1. strokeStartTime ÷ 1000 = 초 → MM:SS 변환 (소수점 버림)
-2. 각 stroke는 하나의 객체에만 속함
+**분석 순서:**
+1. **이미지에서 객체 위치 먼저 파악:**
+   - 각 객체가 어느 위치에 있는지 정확히 확인 (상단/중단/하단 + 좌측/중앙/우측)
+   - 예시: "지붕이 상단 중앙", "왼쪽 창문이 상단 좌측", "오른쪽 창문이 상단 우측", "문이 하단 중앙"
 
-**분석 방법:**
-1. 이미지에서 각 객체의 정확한 x,y 좌표 범위 측정
-2. 모든 stroke를 strokeStartTime 순으로 정렬
-3. 각 stroke의 points 좌표가 어느 객체 범위에 속하는지 매칭
-4. 각 객체별 가장 빠른 strokeStartTime을 MM:SS로 변환
+2. **stroke 데이터와 위치 비교:**
+   - 각 stroke의 points 위치를 보고 9개 영역 중 어디에 해당하는지 판단:
+     * 상단좌측, 상단중앙, 상단우측
+     * 중단좌측, 중단중앙, 중단우측  
+     * 하단좌측, 하단중앙, 하단우측
+   - 해당 위치에 있는 객체의 stroke로 분류
+
+3. **각 객체별 시간 찾기:**
+   - 같은 객체로 분류된 stroke들 중 가장 작은 strokeStartTime 찾기
+   - strokeStartTime ÷ 1000 = 초, 소수점 버림해서 MM:SS 변환
 
 **예시:**
-- 지붕 범위: x: 150-350, y: 80-180
-- stroke A points가 (200,100) 영역 → 지붕 매칭
-- 지붕 stroke들 중 최소 strokeStartTime: 2917ms → 00:02
+- 이미지 보니 지붕이 상단중앙, 왼쪽창문이 상단좌측에 있음
+- stroke 1의 points가 상단중앙 → 지붕 stroke
+- stroke 5의 points가 상단좌측 → 왼쪽창문 stroke
+- 지붕 stroke들 중 최소 시간: 2917ms → 00:02
 
-**중요: 응답에 좌표 수치 포함 금지**
-
-JSON 응답:
+JSON 응답만:
 {
-  "objectiveSummary": "전체 그림 요약",
+  "objectiveSummary": "간단 요약",
   "objectsTimestamps": [
-    {
-      "timestamp": "MM:SS",
-      "event": "객체명 - 특성",
-      "type": "object"
-    }
+    {"timestamp": "MM:SS", "event": "객체명", "type": "object"}
   ]
 }`;
 
