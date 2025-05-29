@@ -62,38 +62,35 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, testId, 
                 break;
         }
 
-        const prompt = `사용자는 현재 HTP 검사 중 ${objectDescription}을(를) 완성했습니다.
-이 그림은 7-13세 아동이 그린 것으로, 심리상담사가 활용할 분석 자료입니다.
+        const prompt = `사용자는 현재 HTP 검사 중 ${objectDescription}을(를) 그렸습니다.
+이 그림은 7-13세 아동이 그린 것으로, 각 객체가 언제 그려졌는지 정확한 시간을 찾는 것이 목표입니다.
 
-**핵심 목표: 각 개별 객체가 실제로 그려진 정확한 시간 찾기**
+**핵심 분석 방법: 좌표 기반 객체-획 매칭**
 
-**좌표 데이터 구조 이해:**
-- 배열 형태로 각 획(stroke)이 개별 객체로 저장됨
-- 각 stroke 객체의 최상위 레벨에 "strokeStartTime" 필드 존재 (밀리초 단위)
-- "strokeOrder" 필드로 그려진 순서 확인 가능
-- "points" 배열에 실제 x, y 좌표들이 저장됨
-- "isErasing": false인 stroke만 분석 (지우개 제외)
+1. **이미지에서 객체 위치 파악**:
+   - 이미지를 보고 각 객체(지붕, 벽, 문, 창문 등)가 어느 위치에 있는지 확인
+   - 각 객체의 대략적인 좌표 영역 추정
 
-**분석 방법:**
-1. **시간 추출**: 각 stroke 객체에서 strokeStartTime 값을 직접 읽어와서 MM:SS로 변환
-   - 예: strokeStartTime: 2917 → 2917밀리초 → 00:02 (2.917초 ≈ 3초)
-   - 예: strokeStartTime: 7500 → 7500밀리초 → 00:07 (7.5초)
+2. **좌표 데이터에서 해당 객체의 획들 찾기**:
+   - 각 stroke의 points 배열을 확인하여 x, y 좌표 범위 파악
+   - 1단계에서 파악한 객체 위치와 일치하는 stroke들을 해당 객체의 획으로 분류
+   - 예: 이미지 상단에 지붕이 있다면, y값이 작은 stroke들을 지붕 관련 획으로 분류
 
-2. **객체 그룹핑**: 
-   - strokeOrder 순서와 strokeStartTime을 함께 고려
-   - 시간적으로 연속된 stroke들 (5초 이내)을 하나의 드로잉 세션으로 간주
-   - points 배열의 좌표를 보고 공간적 연관성 판단
+3. **각 객체의 시작 시간 결정**:
+   - 동일 객체로 분류된 stroke들 중에서 가장 작은 strokeStartTime 값을 찾기
+   - 그 값을 MM:SS 형식으로 변환하여 해당 객체의 시작 시간으로 설정
 
-3. **객체 매칭**: 각 드로잉 세션이 이미지의 어떤 객체에 해당하는지 판단
-   - 각 객체의 첫 번째 stroke의 strokeStartTime을 해당 객체 시작 시간으로 설정
+**분석 절차:**
+1. 이미지 관찰 → 객체별 위치 파악
+2. 좌표 데이터 분석 → 각 stroke의 위치 확인  
+3. 위치 매칭 → 객체별 stroke 그룹핑
+4. 시간 추출 → 각 그룹의 최소 strokeStartTime 찾기
 
-**객체 식별 대상:** ${objectElements}
-
-**중요 규칙:**
-- strokeStartTime 값을 정확히 MM:SS로 변환 (반올림: 2917ms → 00:03)
-- 창문 두 개, 눈 두 개 등은 각각 별개의 객체로 구분
+**중요한 규칙:**
+- 좌표 데이터의 strokeStartTime 값을 정확히 MM:SS로 변환 (예: 2917ms → 00:03)
+- 같은 객체라도 여러 번 나누어 그려졌을 수 있으므로, 가장 처음 그려진 획의 시간을 사용
 - isErasing이 true인 stroke은 무시
-- strokeOrder 순서도 함께 고려하여 그려진 흐름 파악
+- 좌표 기반 매칭이 우선, 시간 간격은 고려하지 않음
 
 응답은 다음 JSON 형식으로 작성해주세요. JSON 마크다운 없이 순수 JSON만 응답해주세요:
 {
