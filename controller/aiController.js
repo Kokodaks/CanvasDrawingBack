@@ -27,7 +27,7 @@ exports.sendFinalToOpenAi = async(req, res) => {
             console.log('✅ 최종 이미지 S3 저장 완료:', result.Location);
         }
 
-        const result = await aiService.sendFinalToOpenAi(finalImageBuffer, finalDrawingBuffer, type, testId);
+        const result = await aiService.sendFinalToOpenAi(finalImageBuffer, finalDrawingBuffer, testId, type);
 
         console.log({ "✅ ai response" : result });
         return res.status(200).json({ message: '✅ successfully saved events gpt analysis', result });
