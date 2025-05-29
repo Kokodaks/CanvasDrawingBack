@@ -65,27 +65,37 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, testId, 
         const prompt = `사용자는 현재 HTP 검사 중 ${objectDescription}을(를) 완성했습니다.
 이 그림은 7-13세 아동이 그린 것으로, 심리상담사가 활용할 분석 자료입니다.
 
-**중요: 이 작업의 핵심은 각 객체가 그려진 정확한 시간을 찾는 것입니다.**
+**핵심 목표: 각 객체가 그려진 정확한 시간을 찾기 위해 좌표 데이터와 이미지를 정밀 매칭**
 
-제공된 좌표 데이터에서 strokeStartTime 값을 밀리초 단위로 분석하여 MM:SS 형식으로 정확히 변환해주세요.
+**분석 프로세스 (반드시 이 순서로 진행):**
 
-**시간 분석 우선순위:**
-1. 좌표 데이터의 각 stroke별 strokeStartTime 값을 정밀 분석
-2. 동일한 객체를 구성하는 여러 stroke들 중 가장 빠른 시작 시간 선택
-3. 밀리초를 MM:SS 형식으로 정확히 변환 (예: 2340ms → 00:02, 7890ms → 00:07)
-4. 시간 순서대로 객체 나열
+STEP 1: 좌표 데이터 전처리
+- 모든 stroke의 x, y 좌표 범위와 strokeStartTime 추출
+- 좌표 기준으로 stroke들을 공간적 클러스터 그룹핑
+- 각 클러스터의 중심점과 범위 계산
+
+STEP 2: 이미지-좌표 매핑
+- 이미지에서 관찰되는 각 객체의 시각적 위치를 좌표 범위로 추정
+- 예: "상단 중앙의 삼각형" → X: 200-400, Y: 50-150 범위 예상
+
+STEP 3: 클러스터-객체 매칭  
+- STEP 1의 좌표 클러스터와 STEP 2의 객체 위치를 매칭
+- 공간적 일치도가 높은 클러스터를 해당 객체의 stroke 그룹으로 확정
+
+STEP 4: 시간 추출
+- 확정된 각 stroke 그룹에서 최초 strokeStartTime 추출 및 MM:SS 변환
+
+**매칭 기준:**
+- 동일 객체 내 stroke간 최대 거리: 일반적으로 50-100px 이내
+- 시간적 연속성: 같은 객체 내 stroke들은 대부분 시간적으로 근접하게 그려짐
+- 공간적 클러스터링: 좌표상 가까운 stroke들을 먼저 그룹화
 
 **객체 식별 대상:** ${objectElements}
 
-**분석 단계:**
-1. 먼저 좌표 데이터에서 모든 strokeStartTime 값들을 추출
-2. 공간적 위치와 연결성을 기반으로 stroke들을 객체별로 그룹화
-3. 각 객체 그룹의 최초 strokeStartTime을 해당 객체의 시작 시간으로 설정
-4. 객체 특성은 간단히만 기술 (예: "지붕 - 상단 삼각형 형태")
-
 **절대 준수사항:**
-- strokeStartTime 값을 반드시 정확히 MM:SS로 변환
-- 추측이나 대략적인 시간 배치 금지
+- 반드시 위 4단계 순서대로 분석 진행
+- strokeStartTime 값을 정확히 MM:SS로 변환 (예: 2340ms → 00:02)
+- 추측하지 말고 좌표 데이터와 정확히 일치하는 stroke만 매칭
 - 심리적 해석 금지, 오직 객관적 관찰만
 
 응답은 다음 JSON 형식으로 작성해주세요. JSON 마크다운 없이 순수 JSON만 응답해주세요:
@@ -98,11 +108,16 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, testId, 
       "type": "object"
     }
   ],
-  "timeAnalysisNote": "시간 분석 과정에서 발견한 주요 패턴이나 특이사항"
+  "analysisSteps": {
+    "step1": "좌표 클러스터링 결과 요약",
+    "step2": "이미지 객체 위치 추정 결과",  
+    "step3": "클러스터-객체 매칭 결과",
+    "step4": "최종 시간 추출 결과"
+  }
 }`;
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-4.1-mini",
             messages: [
                 {
                     role: "user",
