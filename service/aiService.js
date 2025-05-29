@@ -115,7 +115,7 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, testId, 
 }`;
 
         const response = await openai.chat.completions.create({
-            model: "o4-mini",
+            model: "gpt-4.1-mini",
             messages: [
                 {
                     role: "user",
