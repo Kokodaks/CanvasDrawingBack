@@ -41,23 +41,23 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, testId, 
             finalDrawingJson = JSON.parse(fs.readFileSync(finalDrawingPath, 'utf-8'));
         }
 
-        let allowedObjects = [];
+        let objectElements = '';
         let objectDescription = '';
         switch (type) {
             case 'house':
-                allowedObjects = ['지붕', '벽', '문', '창문', '기타'];
+                objectElements = '지붕, 벽, 문, 창문, 굴뚝, 연기, 울타리, 길, 연못, 산, 나무, 꽃, 잔디, 태양 등';
                 objectDescription = '집';
                 break;
             case 'tree':
-                allowedObjects = ['줄기', '가지', '수관', '기타'];
+                objectElements = '기둥, 수관, 가지, 뿌리, 나뭇잎, 꽃, 열매, 그네, 새, 다람쥐, 구름, 달, 별 등';
                 objectDescription = '나무';
                 break;
             case 'man':
-                allowedObjects = ['머리', '눈코입', '몸통', '팔', '다리', '손', '발', '기타'];
+                objectElements = '머리, 얼굴(눈, 코, 입, 귀), 머리카락, 목, 상체, 팔, 손, 다리, 발, 옷(단추, 주머니, 벨트), 신발, 액세서리(모자, 안경) 등';
                 objectDescription = '남자';
                 break;
             case 'woman':
-                allowedObjects = ['머리', '눈코입', '몸통', '팔', '다리', '손', '발', '기타'];
+                objectElements = '머리, 얼굴(눈, 코, 입, 귀), 머리카락, 목, 상체, 팔, 손, 다리, 발, 옷(단추, 주머니, 치마, 드레스), 신발, 액세서리(모자, 귀걸이, 목걸이) 등';
                 objectDescription = '여자';
                 break;
         }
@@ -67,26 +67,10 @@ exports.sendFinalToOpenAi = async(finalImageBuffer, finalDrawingBuffer, testId, 
 
 **매우 중요한 규칙들:**
 1. 각 stroke는 단 하나의 객체에만 속합니다 - 중복 사용 절대 금지
-2. 🔴 **객체 연속성 규칙**: 각 객체는 반드시 연속된 획들로만 구성됩니다
-   - 사용자는 한 객체를 완전히 그린 후 다음 객체로 넘어갑니다
-   - 같은 객체의 획들은 strokeIndex가 연속적이어야 합니다 (예: 1,2,3,4)
-   - 중간에 다른 획이 끼어있으면 절대 같은 객체가 아닙니다 (예: 1,2,5,6 ❌)
-   - 예시: strokeIndex 1,2,3→지붕, 4,5,6,7→벽 (연속적 ✅)
-   - 잘못된 예시: strokeIndex 1,3,5→지붕 (2,4가 끼어있음 ❌)
-3. 밀리초 변환 공식: strokeStartTime ÷ 1000 = 초, 그 다음 MM:SS 형식
+2. 밀리초 변환 공식: strokeStartTime ÷ 1000 = 초, 그 다음 MM:SS 형식
    - 예: 2917ms ÷ 1000 = 2.917초 = 00:02 (소수점 버림)
    - 예: 7500ms ÷ 1000 = 7.5초 = 00:07
    - 예: 12340ms ÷ 1000 = 12.34초 = 00:12
-
-**객체 분류 제한 규칙:**
-🔴 **오직 다음 객체들만 분석하고 찾아내세요:**
-${allowedObjects.map(obj => `- ${obj}`).join('\n')}
-
-⚠️ **중요한 제한사항:**
-- 위 목록에 없는 객체는 절대 분석하지 마세요
-- 주제(${objectDescription})와 관련 없는 획들은 무시하세요
-- 장식적이거나 배경적인 요소들은 '기타'로 분류하거나 무시하세요
-- 확실하지 않은 객체는 분석하지 말고 넘어가세요
 
 **정확한 분석 방법:**
 1. **각 stroke의 형태와 위치 분석**:
@@ -94,52 +78,27 @@ ${allowedObjects.map(obj => `- ${obj}`).join('\n')}
    - stroke의 시작점과 끝점, 전체적인 방향성 확인
    - 전체 그림에서 해당 stroke가 차지하는 위치와 크기 파악
 
-2. **허용된 객체와의 매칭**:
-   - 이미지의 각 영역이 허용된 객체 목록 중 어떤 것에 해당하는지 확인
-   - 각 stroke의 형태와 위치를 허용된 객체와 비교하여 매칭
-   - 허용된 객체가 아니면 분석하지 않음
+2. **객체-stroke 매칭**:
+   - 이미지의 각 객체가 어떤 형태와 위치에 있는지 관찰
+   - 각 stroke의 형태와 위치를 객체와 비교하여 매칭
+   - 예시 판단:
+     * 상단의 삼각형 형태 stroke → 지붕
+     * 수직/수평 직선들이 사각형을 만드는 stroke → 벽
+     * 하단 중앙의 작은 사각형 stroke → 문
+     * 상단이나 중간의 작은 사각형 stroke → 창문
 
 3. **객체별 stroke 그룹핑**:
-   - 동일한 허용된 객체로 판단된 stroke들을 그룹으로 묶기
+   - 동일한 객체로 판단된 stroke들을 그룹으로 묶기
    - 각 그룹에서 가장 작은 strokeStartTime 찾기
 
 4. **시간 추출 및 변환**:
    - 각 객체 그룹의 최소 strokeStartTime을 MM:SS로 변환
 
-**판단 기준 (${objectDescription} 전용):**`;
-
-        // 타입별 구체적인 판단 기준 추가
-        switch (type) {
-            case 'house':
-                prompt += `
-- 지붕: 상단의 삼각형 또는 사다리꼴 형태의 stroke들
-- 벽: 지붕 아래의 사각형 형태를 만드는 수직/수평 직선들
-- 문: 하단 중앙 부근의 작은 사각형 또는 반원 형태
-- 창문: 벽 영역 내의 작은 사각형 형태들
-- 기타: 위 4가지에 해당하지 않는 집 관련 요소들`;
-                break;
-            case 'tree':
-                prompt += `
-- 줄기: 중앙 하단의 수직 직선 또는 두꺼운 선
-- 가지: 줄기에서 뻗어나가는 선들
-- 수관: 상단의 둥근 형태나 잎사귀 덩어리
-- 기타: 위 3가지에 해당하지 않는 나무 관련 요소들`;
-                break;
-            case 'man':
-            case 'woman':
-                prompt += `
-- 머리: 상단의 원형 또는 타원형
-- 눈코입: 머리 안의 얼굴 특징들 (눈, 코, 입을 하나의 객체로 분류)
-- 몸통: 머리 아래의 사각형 또는 타원형 몸체
-- 팔: 몸통 양쪽에서 뻗어나가는 선들
-- 다리: 몸통 하단에서 뻗어나가는 선들
-- 손: 팔 끝의 작은 형태들
-- 발: 다리 끝의 작은 형태들
-- 기타: 위 7가지에 해당하지 않는 사람 관련 요소들`;
-                break;
-        }
-
-        prompt += `
+**판단 기준:**
+- stroke의 형태 (직선, 곡선, 닫힌 도형 등)
+- stroke의 위치 (상단, 중단, 하단, 좌측, 우측, 중앙)
+- stroke의 크기와 방향성
+- 전체 그림에서의 역할과 의미
 
 **중요: 응답에는 구체적인 좌표나 형태 분석 과정을 포함하지 마세요. 오직 획 매칭을 위한 내부 분석용으로만 사용하세요.**
 
