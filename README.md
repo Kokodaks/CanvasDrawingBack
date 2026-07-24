@@ -1,4 +1,4 @@
-# 드로잉 아이 (Drawing Eye) - Backend
+# 드로잉 아이 (DrawingI) - Backend
 
 House-Tree-Person (HTP) 그림 심리 검사를 비대면으로 진행하고, 그림의 리컨스트럭션(Reconstruction), AI 기반 1차원적 분석, 풀 영상 스트리밍을 제공하는 백엔드 시스템입니다. 심리상담가의 업무 편의성을 극대화하며, 부모와 아이가 높은 접근성으로 심리 검사를 진행할 수 있도록 지원합니다.
 
